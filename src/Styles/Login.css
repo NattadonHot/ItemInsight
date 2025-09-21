@@ -6,7 +6,7 @@
 
 body {
   margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Poppins';
   background-color: #f9fafb;
 }
 
@@ -19,7 +19,8 @@ body {
 }
 
 .logo {
-  font-size: 2rem;
+  font-family: 'Montserrat';
+  font-size: 3rem;
   font-weight: bold;
   margin-bottom: 2rem;
 }
@@ -42,7 +43,7 @@ body {
   color: var(--dark);
   font-weight: bold;
   margin-bottom: 0.5rem;
-  text-transform: lowercase;
+  font-size: 17px;
 }
 
 .login-form input {
@@ -66,6 +67,7 @@ body {
   border-radius: 8px;
   font-weight: bold;
   cursor: pointer;
+  font-size: 15px;
   transition: background 0.3s ease;
 }
 
@@ -78,6 +80,7 @@ body {
   color: var(--dark);
   text-align: center;
   cursor: pointer;
+  font-size: 14px;
 }
 
 .signup-link:hover {

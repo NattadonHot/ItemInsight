@@ -10,10 +10,10 @@ function Login() {
 
       <form className="login-form">
         <label htmlFor="username">Username</label>
-        <input type="text" id="username" placeholder="username" />
+        <input type="text" id="username" />
 
         <label htmlFor="password">Password</label>
-        <input type="password" id="password" placeholder="password" />
+        <input type="password" id="password" />
 
         <button type="button" className="btn-login">LOGIN</button>
         <p className="signup-link">Signup</p>
