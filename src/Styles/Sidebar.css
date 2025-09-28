@@ -1,0 +1,28 @@
+.sidebar {
+  display: flex;
+  flex-direction: column; /* เรียงจากบนลงล่าง */
+  width: 200px;           /* ปรับความกว้างตามต้องการ */
+  padding: 20px;
+  background-color: #f8f8f8;
+  height: 100vh;          /* ให้ sidebar เต็มความสูงหน้าจอ */
+  box-sizing: border-box;
+}
+
+.sidebar-link {
+  display: flex;          /* ทำให้ icon + text อยู่ในแถวเดียว */
+  align-items: center;
+  padding: 10px 15px;
+  margin-bottom: 10px;  
+  text-decoration: none;
+  color: #333;
+  border-radius: 8px;
+   gap: 10px;
+}
+
+.sidebar-link:hover {
+  background-color: #e0e0e0;
+}
+
+.logout {
+  margin-top: auto;       /* ดันปุ่ม logout ลงด้านล่าง */
+}
