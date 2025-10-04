@@ -1,0 +1,79 @@
+:root {
+  --white: #f9fafb;
+  --orange: #F59E0B;
+  --blue: #2563eb;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--blue); /* น้ำเงิน */
+  padding: 10px 20px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  padding-left: 20px;
+}
+
+.burger {
+  color: var(--white); /* ขาว */
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  position: relative;
+  top: 0px;
+}
+
+.logo {
+  font-family: 'Montserrat';
+  font-size: 30px;
+  font-weight: bold;
+  display: flex;
+  align-items: center; /* ทำให้ text อยู่กลางเทียบกับ icon */
+  line-height: 1;
+  position: relative;
+  top: 4px;
+}
+
+.logo-white {
+  color: var(--white); /* ขาว */
+}
+
+.logo-orange {
+  color: var(--orange); /* ส้ม */
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  background-color: var(--white); /* ขาว */
+  border-radius: 9999px; /* ทำให้โค้งมน */
+  padding: 5px 10px;
+  width: 250px;
+}
+
+.search-icon {
+  color: #9ca3af; /* เทาอ่อน */
+  margin-right: 8px;
+}
+
+.search-box input {
+  border: none;
+  outline: none;
+  flex: 1;
+  font-size: 14px;
+  color: #374151;
+  background: transparent;
+}
+
+.user-icon {
+  color: var(--white); /* ขาว */
+  font-size: 35px;
+  cursor: pointer;
+  padding-right: 45px;
+}
