@@ -1,9 +1,13 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import "../Styles/Register.css"; // ✅ ใช้ CSS ใหม่
+import "../Styles/Register.css";
 
-function Register() {
+interface RegisterProps {
+  onRegister: () => void; // callback เมื่อ register สำเร็จ
+}
+
+export default function Register({ onRegister }: RegisterProps) {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -27,8 +31,8 @@ function Register() {
       setMessage("✅ Registered successfully!");
       console.log("Response:", response.data);
 
-      // เปลี่ยนหน้าไป login หลังสมัครเสร็จ
-      setTimeout(() => navigate("/login"), 1500);
+      // ✅ หลัง register สำเร็จ ให้เรียก callback onRegister
+      setTimeout(() => onRegister(), 1500);
     } catch (err: any) {
       if (err.response) {
         setMessage(`❌ ${err.response.data.message}`);
@@ -95,5 +99,3 @@ function Register() {
     </div>
   );
 }
-
-export default Register;

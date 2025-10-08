@@ -3,7 +3,11 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../Styles/Login.css";
 
-function Login() {
+interface LoginProps {
+  onLogin: () => void;
+}
+
+export default function Login({ onLogin }: LoginProps) {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -11,21 +15,17 @@ function Login() {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post("http://localhost:5000/api/login", {
+      const response = await axios.post("https://solid-carnival-jjjr66wwg6rp35679-5000.app.github.dev/api/login", {
         email,
         password,
       });
 
-      // ✅ ถ้า login สำเร็จ
       if (response.status === 200) {
         setMessage("✅ Login successful!");
-
-        // เก็บ token หรือ user data ไว้ใน localStorage
         localStorage.setItem("token", response.data.token || "");
         localStorage.setItem("userEmail", email);
 
-        // ✅ ไปหน้า Home
-        setTimeout(() => navigate("/home"), 1000);
+        setTimeout(() => onLogin(), 500);
       }
     } catch (err: any) {
       if (err.response) {
@@ -75,5 +75,3 @@ function Login() {
     </div>
   );
 }
-
-export default Login;
