@@ -86,3 +86,14 @@ body {
 .signup-link:hover {
   color: var(--orange);
 }
+
+@media (max-width: 480px) {
+  .login-form {
+    width: 90%;
+  }
+
+  .logo {
+    font-size: 2.5rem;
+  }
+}
+
