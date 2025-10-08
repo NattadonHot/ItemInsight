@@ -15,7 +15,7 @@ export default function Login({ onLogin }: LoginProps) {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post("https://solid-carnival-jjjr66wwg6rp35679-5000.app.github.dev/api/login", {
+      const response = await axios.post("https://studious-space-adventure-7vv7qq444vw9cxprr-5000.app.github.dev/api/login", {
         email,
         password,
       });
