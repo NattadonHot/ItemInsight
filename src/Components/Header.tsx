@@ -1,28 +1,28 @@
 import { FaBars, FaSearch, FaUserCircle } from "react-icons/fa";
 import "../Styles/Header.css";
-import "../Components/Sidebar"
-import { useState } from "react";
+import type { Dispatch, SetStateAction } from "react";
 
-export default function Header() {
-    const [open,setOpen] = useState(false);
- 
-    return (
-        <header className="header">
+interface HeaderProps {
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+  onLogout: () => void;
+}
 
-        <div className="header-left">
-            <FaBars className="burger" onClick={() => setOpen(true)}/>
-            <h1 className="logo">
-            <span className="logo-white">Item</span>
-            <span className="logo-orange">Insight</span>
-            </h1>
-
-            <div className="search-box">
-                <FaSearch className="search-icon" />
-                <input type="text" placeholder="Search..." />
-            </div>
+export default function Header({ open, setOpen, onLogout }: HeaderProps) {
+  return (
+    <header className="header">
+      <div className="header-left">
+        <FaBars className="burger" onClick={() => setOpen(!open)} />
+        <h1 className="logo">
+          <span className="logo-white">Item</span>
+          <span className="logo-orange">Insight</span>
+        </h1>
+        <div className="search-box">
+          <FaSearch className="search-icon" />
+          <input type="text" placeholder="Search..." />
         </div>
-
-        <FaUserCircle className="user-icon" />
-        </header>
-    );
+      </div>
+      <FaUserCircle className="user-icon" onClick={onLogout} />
+    </header>
+  );
 }
