@@ -1,6 +1,7 @@
 import { FaBars, FaSearch, FaUserCircle } from "react-icons/fa";
 import "../Styles/Header.css";
 import type { Dispatch, SetStateAction } from "react";
+import { Link } from "react-router-dom"
 
 interface HeaderProps {
   open: boolean;
@@ -8,7 +9,7 @@ interface HeaderProps {
   onLogout: () => void;
 }
 
-export default function Header({ open, setOpen, onLogout }: HeaderProps) {
+export default function Header({ open, setOpen }: HeaderProps) {
   return (
     <header className="header">
       <div className="header-left">
@@ -22,7 +23,9 @@ export default function Header({ open, setOpen, onLogout }: HeaderProps) {
           <input type="text" placeholder="Search..." />
         </div>
       </div>
-      <FaUserCircle className="user-icon" onClick={onLogout} />
+      <Link to="/profile">
+        <FaUserCircle className="user-icon" />
+      </Link>
     </header>
   );
 }

@@ -26,12 +26,12 @@ export default function App() {
 
   return (
     <div className="app">
-      <Header open={open} setOpen={setOpen} onLogout={handleLogout} />
-      <Sidebar open={open} setOpen={setOpen} />
+      <Header open={open} setOpen={setOpen}  onLogout={handleLogout}/>
+      <Sidebar open={open} setOpen={setOpen} onLogout={handleLogout}/>
       <div
         className="main-content"
         onClick={() => setOpen(false)}
-        style={{ transition: "filter 0.3s ease", padding: "20px" }}
+        style={{ transition: "filter 0.3s ease", padding: "20px" ,marginTop:"65px"}}
       >
         <Routes>
           <Route path="/home" element={<Home />} />

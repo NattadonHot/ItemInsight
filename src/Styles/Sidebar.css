@@ -1,28 +1,82 @@
+/* Sidebar.css */
+.sidebar-container {
+  position: fixed;
+  top: 65px;
+  left: -250px; /* ซ่อน sidebar ออกนอกหน้าจอ */
+  width: 250px;
+  height: calc(100vh - 65px);
+  background-color: #fcfcfc;
+  transition: left 0.3s ease-in-out;
+  z-index: 1000; /* ให้อยู่ด้านบนสุด */
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.sidebar-container.open {
+  left: 0; /* แสดง sidebar */
+}
+
 .sidebar {
   display: flex;
-  flex-direction: column; /* เรียงจากบนลงล่าง */
-  width: 200px;           /* ปรับความกว้างตามต้องการ */
+  flex-direction: column;
+  width: 100%;
   padding: 20px;
-  background-color: #f8f8f8;
-  height: 100vh;          /* ให้ sidebar เต็มความสูงหน้าจอ */
+  height: 100%;
   box-sizing: border-box;
+  overflow-y: auto;
 }
 
 .sidebar-link {
-  display: flex;          /* ทำให้ icon + text อยู่ในแถวเดียว */
+  display: flex;
   align-items: center;
-  padding: 10px 15px;
-  margin-bottom: 10px;  
+  padding: 12px 15px;
+  margin-bottom: 8px;
   text-decoration: none;
   color: #333;
   border-radius: 8px;
-   gap: 10px;
+  gap: 12px;
+  transition: background-color 0.2s ease;
 }
 
 .sidebar-link:hover {
-  background-color: #e0e0e0;
+  background-color: #b0abab;
 }
 
-.logout {
-  margin-top: auto;       /* ดันปุ่ม logout ลงด้านล่าง */
+/* Overlay เมื่อ sidebar เปิด */
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.sidebar-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ปุ่มปิด sidebar */
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #333;
+  padding: 5px;
+}
+
+.close-btn:hover {
+  color: #ff6b35;
+}
+
+.sidebar-logout {
+  margin-top: auto; /* magic ของ flexbox ดันไปล่าง */
 }

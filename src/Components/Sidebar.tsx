@@ -6,6 +6,7 @@ import {
   FaStar,
   FaPen,
 } from "react-icons/fa";
+import { CiLogout } from "react-icons/ci";
 import { Link } from "react-router-dom";
 import "../Styles/Sidebar.css";
 import type { Dispatch, SetStateAction } from "react";
@@ -13,9 +14,10 @@ import type { Dispatch, SetStateAction } from "react";
 interface SidebarProps {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
+  onLogout: () => void;
 }
 
-export default function Sidebar({ open, setOpen }: SidebarProps) {
+export default function Sidebar({ open, setOpen , onLogout}: SidebarProps) {
   return (
     <div className={`sidebar-container ${open ? "open" : ""}`}>
       <div className="sidebar">
@@ -36,6 +38,9 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
         </Link>
         <Link to="/write" className="sidebar-link" onClick={() => setOpen(false)}>
           <FaPen /> Write
+        </Link>
+        <Link to="/login" className="sidebar-link sidebar-logout" onClick={() => {setOpen(false); onLogout();}}>
+          <CiLogout /> Logout
         </Link>
       </div>
     </div>
