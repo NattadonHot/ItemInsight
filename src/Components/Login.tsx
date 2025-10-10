@@ -15,10 +15,13 @@ export default function Login({ onLogin }: LoginProps) {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post("https://studious-space-adventure-7vv7qq444vw9cxprr-5000.app.github.dev/api/login", {
-        email,
-        password,
-      });
+      const response = await axios.post(
+        "https://studious-space-adventure-7vv7qq444vw9cxprr-5000.app.github.dev/api/login",
+        {
+          email,
+          password,
+        }
+      );
 
       if (response.status === 200) {
         setMessage("✅ Login successful!");
@@ -43,7 +46,14 @@ export default function Login({ onLogin }: LoginProps) {
         <span className="logo-orange">Insight</span>
       </h1>
 
-      <form className="login-form" onSubmit={(e) => e.preventDefault()}>
+      {/* ใช้ onSubmit ของ form แทนปุ่ม type="button" */}
+      <form
+        className="login-form"
+        onSubmit={(e) => {
+          e.preventDefault(); // ป้องกัน page reload
+          handleLogin(); // เรียก login
+        }}
+      >
         <label>Email</label>
         <input
           type="email"
@@ -62,7 +72,8 @@ export default function Login({ onLogin }: LoginProps) {
           required
         />
 
-        <button type="button" className="btn-login" onClick={handleLogin}>
+        {/* เปลี่ยนปุ่มเป็น type="submit" */}
+        <button type="submit" className="btn-login">
           LOGIN
         </button>
 

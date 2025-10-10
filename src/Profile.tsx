@@ -1,4 +1,10 @@
+import { useEffect } from "react";
+
 function Profile() {
+    useEffect(() => {
+        document.title = 'My Profile in ItemInsight';
+    }, []);
+
     return (
         <div className="profile-container"
             style={{
