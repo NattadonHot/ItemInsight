@@ -18,17 +18,25 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ open, setOpen , onLogout}: SidebarProps) {
+  const handleLogout = () => {
+    // ล้าง localStorage
+    localStorage.removeItem("token");
+    localStorage.removeItem("userEmail");
+    // call onLogout prop
+    onLogout();
+  };
+
   return (
     <div className={`sidebar-container ${open ? "open" : ""}`}>
       <div className="sidebar">
-        <Link to="/profile" className="sidebar-link" onClick={() => setOpen(false)}>
-          <FaUser /> Profile
-        </Link>
         <Link to="/home" className="sidebar-link" onClick={() => setOpen(false)}>
           <FaHome /> Home
         </Link>
-        <Link to="/settings" className="sidebar-link" onClick={() => setOpen(false)}>
-          <FaCog /> Setting
+        <Link to="/profile" className="sidebar-link" onClick={() => setOpen(false)}>
+          <FaUser /> Profile
+        </Link>
+        <Link to="/write" className="sidebar-link" onClick={() => setOpen(false)}>
+          <FaPen /> Write
         </Link>
         <Link to="/bookmarks" className="sidebar-link" onClick={() => setOpen(false)}>
           <FaBookmark /> Bookmark
@@ -36,12 +44,20 @@ export default function Sidebar({ open, setOpen , onLogout}: SidebarProps) {
         <Link to="/favorites" className="sidebar-link" onClick={() => setOpen(false)}>
           <FaStar /> Favorite
         </Link>
-        <Link to="/write" className="sidebar-link" onClick={() => setOpen(false)}>
-          <FaPen /> Write
+        <Link to="/settings" className="sidebar-link" onClick={() => setOpen(false)}>
+          <FaCog /> Setting
         </Link>
-        <Link to="/login" className="sidebar-link sidebar-logout" onClick={() => {setOpen(false); onLogout();}}>
+        
+        <div 
+          className="sidebar-link sidebar-logout" 
+          onClick={() => {
+            setOpen(false); 
+            handleLogout();
+          }}
+          style={{ cursor: 'pointer' }}
+        >
           <CiLogout /> Logout
-        </Link>
+        </div>
       </div>
     </div>
   );

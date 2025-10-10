@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Header from "./Components/Header";
 import Sidebar from "./Components/Sidebar";
@@ -6,14 +6,32 @@ import Home from "./Home";
 import Profile from "./Profile";
 import Login from "./Components/Login";
 import Register from "./Components/Register";
+import ProtectedRoute from "./Components/ProtectedRoute";
 
 export default function App() {
-  const [open, setOpen] = useState(false); // sidebar state
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // login state
+  const [open, setOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token);
+    setIsLoading(false);
+  }, []);
 
   const handleLogin = () => setIsLoggedIn(true);
-  const handleLogout = () => setIsLoggedIn(false);
+  
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userEmail");
+    setIsLoggedIn(false);
+  };
 
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  // ✅ ยังคงป้องกันระดับ App ไว้
   if (!isLoggedIn) {
     return (
       <Routes>
@@ -26,16 +44,21 @@ export default function App() {
 
   return (
     <div className="app">
-      <Header open={open} setOpen={setOpen}  onLogout={handleLogout}/>
+      <Header open={open} setOpen={setOpen} onLogout={handleLogout}/>
       <Sidebar open={open} setOpen={setOpen} onLogout={handleLogout}/>
-      <div
-        className="main-content"
-        onClick={() => setOpen(false)}
-        style={{ transition: "filter 0.3s ease", padding: "20px" ,marginTop:"65px"}}
-      >
+      <div className="main-content" onClick={() => setOpen(false)}>
         <Routes>
-          <Route path="/home" element={<Home />} />
-          <Route path="/profile" element={<Profile />} />
+          {/* ✅ เพิ่ม ProtectedRoute สำหรับแต่ละ route */}
+          <Route path="/home" element={
+            <ProtectedRoute isLoggedIn={isLoggedIn}>
+              <Home />
+            </ProtectedRoute>
+          } />
+          <Route path="/profile" element={
+            <ProtectedRoute isLoggedIn={isLoggedIn}>
+              <Profile />
+            </ProtectedRoute>
+          } />
           <Route path="*" element={<Navigate to="/home" />} />
         </Routes>
       </div>
