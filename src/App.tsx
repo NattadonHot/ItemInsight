@@ -7,6 +7,7 @@ import Profile from "./Profile";
 import Login from "./Components/Login";
 import Register from "./Components/Register";
 import ProtectedRoute from "./Components/ProtectedRoute";
+import Write from "./Write";
 
 export default function App() {
   const [open, setOpen] = useState(false);
@@ -57,6 +58,11 @@ export default function App() {
           <Route path="/profile" element={
             <ProtectedRoute isLoggedIn={isLoggedIn}>
               <Profile />
+            </ProtectedRoute>
+          } />
+          <Route path="/write" element={
+            <ProtectedRoute isLoggedIn={isLoggedIn}>
+              <Write />
             </ProtectedRoute>
           } />
           <Route path="*" element={<Navigate to="/home" />} />
