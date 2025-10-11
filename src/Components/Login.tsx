@@ -15,19 +15,16 @@ export default function Login({ onLogin }: LoginProps) {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post(
-        "https://studious-space-adventure-7vv7qq444vw9cxprr-5000.app.github.dev/api/login",
-        {
-          email,
-          password,
-        }
-      );
+      const response = await axios.post("http://localhost:3000/api/login", { email, password });
 
       if (response.status === 200) {
+        const { token, user } = response.data;
         setMessage("✅ Login successful!");
-        localStorage.setItem("token", response.data.token || "");
-        localStorage.setItem("userEmail", email);
 
+        localStorage.setItem("token", token);
+        localStorage.setItem("userId", user.id); //เก็บ userId
+        localStorage.setItem("userEmail", user.email);
+        localStorage.setItem("avatarUrl", user.avatarUrl);
         setTimeout(() => onLogin(), 500);
       }
     } catch (err: any) {
@@ -46,36 +43,20 @@ export default function Login({ onLogin }: LoginProps) {
         <span className="logo-orange">Insight</span>
       </h1>
 
-      {/* ใช้ onSubmit ของ form แทนปุ่ม type="button" */}
       <form
         className="login-form"
         onSubmit={(e) => {
-          e.preventDefault(); // ป้องกัน page reload
-          handleLogin(); // เรียก login
+          e.preventDefault();
+          handleLogin();
         }}
       >
         <label>Email</label>
-        <input
-          type="email"
-          placeholder="Enter your email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
+        <input type="email" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} required />
 
         <label>Password</label>
-        <input
-          type="password"
-          placeholder="Enter your password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
+        <input type="password" placeholder="Enter your password" value={password} onChange={(e) => setPassword(e.target.value)} required />
 
-        {/* เปลี่ยนปุ่มเป็น type="submit" */}
-        <button type="submit" className="btn-login">
-          LOGIN
-        </button>
+        <button type="submit" className="btn-login">LOGIN</button>
 
         {message && <p className="login-message">{message}</p>}
 

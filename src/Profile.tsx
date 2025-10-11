@@ -1,103 +1,319 @@
-import { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import type { ChangeEvent } from "react";
+import { useNavigate } from "react-router-dom";
 
-function Profile() {
-    useEffect(() => {
-        document.title = 'My Profile in ItemInsight';
-    }, []);
+const MAX_FILE_SIZE_MB = 2;
+const API_URL = "http://localhost:3000";
 
-    return (
-        <div className="profile-container"
-            style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                marginTop: "100px"
-            }}
+const Profile: React.FC = () => {
+  const [userId, setUserId] = useState<string | null>(null);
+  const [username, setUsername] = useState<string>("");
+  const [preview, setPreview] = useState<string>(
+    "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+  );
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
+  const [uploadSuccess, setUploadSuccess] = useState<boolean>(false);
+  const [bio, setBio] = useState<string>("");
+  
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    document.title = "My Profile in ItemInsight";
+
+    // ดึง userId จาก localStorage
+    const storedUserId = localStorage.getItem("userId");
+    const storedUsername = localStorage.getItem("username");
+    
+    if (!storedUserId) {
+      setError("❌ User not logged in");
+      return;
+    }
+    
+    setUserId(storedUserId);
+    if (storedUsername) {
+      setUsername(storedUsername);
+    }
+
+    // Fetch profile
+    const fetchProfile = async () => {
+      try {
+        const res = await axios.get(`${API_URL}/api/user/${storedUserId}`);
+        const userData = res.data;
+        
+        if (userData.avatarUrl) setPreview(userData.avatarUrl);
+        if (userData.username && !storedUsername) {
+          setUsername(userData.username);
+          localStorage.setItem("username", userData.username);
+        }
+        if (userData.bio) setBio(userData.bio);
+        
+      } catch (err) {
+        console.error(err);
+        setError("❌ Cannot fetch profile");
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setError("");
+    setUploadSuccess(false);
+
+    const validTypes = ["image/jpeg", "image/jpg", "image/png"];
+    if (!validTypes.includes(file.type)) {
+      setError("❌ Please select a valid image file (JPG or PNG only).");
+      setSelectedFile(null);
+      return;
+    }
+
+    const fileSizeMB = file.size / (1024 * 1024);
+    if (fileSizeMB > MAX_FILE_SIZE_MB) {
+      setError(`❌ File size too large (max ${MAX_FILE_SIZE_MB} MB).`);
+      setSelectedFile(null);
+      return;
+    }
+
+    setSelectedFile(file);
+    setPreview(URL.createObjectURL(file));
+  };
+
+  const handleUpload = async () => {
+    if (!selectedFile || !userId) {
+      alert("Please select a file first!");
+      return;
+    }
+
+    if (uploading) {
+      return;
+    }
+
+    setUploading(true);
+    setError("");
+    setUploadSuccess(false);
+
+    const data = new FormData();
+    data.append("avatar", selectedFile);
+
+    try {
+      const res = await axios.put(`${API_URL}/api/avatar/${userId}`, data, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      const newAvatarUrl = res.data.avatarUrl;
+      setPreview(newAvatarUrl);
+
+      localStorage.setItem("avatarUrl", newAvatarUrl);
+      window.dispatchEvent(new Event("avatarUpdated"));
+
+      setSelectedFile(null);
+      setUploadSuccess(true);
+
+      alert("✅ Upload successful!");
+    } catch (err: any) {
+      console.error(err);
+      if (err.response?.data?.message) {
+        setError(`❌ ${err.response.data.message}`);
+      } else {
+        setError("❌ Upload failed. Please try again.");
+      }
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleSaveProfile = async () => {
+    if (!userId) {
+      setError("❌ User not logged in");
+      return;
+    }
+
+    try {
+      await axios.put(`${API_URL}/api/user/${userId}`, {
+        bio: bio
+      });
+      
+      alert("✅ Profile updated successfully!");
+    } catch (err: any) {
+      console.error(err);
+      setError("❌ Failed to update profile");
+    }
+  };
+
+  const handleChangePassword = () => {
+    navigate("/change-password");
+  };
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: 100 }}>
+      <img
+        src={preview}
+        alt="Profile"
+        style={{ width: 170, height: 170, borderRadius: "50%", objectFit: "cover", border: "2px solid #3B82F6" }}
+      />
+
+      <div style={{ display: "flex", gap: 10, marginTop: 20 }}>
+        <label
+          htmlFor="file-input"
+          style={{
+            backgroundColor: "#6B7280",
+            color: "#F9FAFB",
+            padding: "8px 16px",
+            borderRadius: 10,
+            cursor: "pointer",
+            fontFamily: "Poppins",
+            fontWeight: 600,
+          }}
         >
-            <img src="https://placehold.co/170x170" style={{ borderRadius: "50%", objectFit: "cover" }} />
-            <button type="button" className="btn-upload"
-                style={{
-                    width: 95,
-                    height: 40,
-                    marginTop: "30px",
-                    borderRadius: "15",
-                    borderColor: "#3B82F6",
-                    backgroundColor: "#F9FAFB",
-                    color: "#3B82F6",
-                    fontSize: 16,
-                    fontFamily: 'Poppins',
-                    fontWeight: '600',
-                    wordWrap: 'break-word',
-                    cursor: "pointer"
-                }}
-            >Upload
-            </button>
-            <form className="profile-form">
-                <div className="name-input" style={{ marginTop: "30px" }}>
-                    <label htmlFor="name" style={{ fontSize: 22, fontFamily: 'Poppins', fontWeight: '600', wordWrap: 'break-word', }}>Name</label><br></br>
-                    <input type="text" id="name"
-                        style={{
-                            width: 400,
-                            height: 40,
-                            border: "2px solid #3B82F6",
-                            backgroundColor: "#F9FAFB",
-                            paddingLeft: "10px"
-                        }}
-                        placeholder="User0001"
-                    /></div>
+          Change
+        </label>
+        <input
+          id="file-input"
+          type="file"
+          accept="image/png, image/jpeg, image/jpg"
+          onChange={handleFileChange}
+          style={{ display: "none" }}
+        />
 
-                <div className="passwd-input" style={{ marginTop: "30px" }}>
-                    <label htmlFor="passwd" style={{ fontSize: 22, fontFamily: 'Poppins', fontWeight: '600', wordWrap: 'break-word', }}>Password</label><br />
-                    <input type="password" id="passwd"
-                        style={{
-                            width: 400,
-                            height: 40,
-                            border: "2px solid #3B82F6",
-                            backgroundColor: "#F9FAFB",
-                            paddingLeft: "10px"
-                        }}
-                        placeholder="********"
-                    />
-                    <div style={{ textAlign: "right" }}>
-                        <span style={{ fontSize: "12px", color: "gray", cursor: "pointer" }}>
-                            change password
-                        </span>
-                    </div>
-                </div>
+        <button
+          type="button"
+          onClick={handleUpload}
+          disabled={!selectedFile || uploading}
+          style={{
+            backgroundColor: !selectedFile || uploading ? "#9CA3AF" : "#3B82F6",
+            color: "#F9FAFB",
+            padding: "8px 16px",
+            borderRadius: 10,
+            border: "none",
+            fontFamily: "Poppins",
+            fontSize: 16,
+            fontWeight: 600,
+            cursor: !selectedFile || uploading ? "not-allowed" : "pointer",
+            opacity: !selectedFile || uploading ? 0.6 : 1,
+          }}
+        >
+          {uploading ? "Uploading..." : "Upload"}
+        </button>
+      </div>
 
+      {uploadSuccess && (
+        <p style={{ color: "green", marginTop: 10, fontFamily: "Poppins", fontWeight: 500 }}>
+          ✅ Avatar updated successfully!
+        </p>
+      )}
 
-                <div className="bio-input" style={{ marginTop: "10px" }}>
-                    <label htmlFor="bio" style={{ fontSize: 22, fontFamily: 'Poppins', fontWeight: '600', wordWrap: 'break-word', }}>Short bio</label><br />
-                    <textarea id="bio"
-                        style={{
-                            width: 400,
-                            height: 112,
-                            border: "2px solid #3B82F6",
-                            backgroundColor: "#F9FAFB",
-                            paddingLeft: "10px"
-                        }}
-                    />
-                </div>
-            </form>
-            <button type="button" className="btn-done"
-                style={{
-                    width: 95,
-                    height: 40,
-                    marginTop: "40px",
-                    borderRadius: "15px",
-                    border: "2px solid #F9FAFB ",
-                    backgroundColor: "#3B82F6",
-                    fontSize: 16,
-                    fontFamily: 'Poppins',
-                    fontWeight: '600',
-                    wordWrap: 'break-word',
-                    color: "#F9FAFB",
-                    cursor: "pointer"
+      {error && <p style={{ color: "red", marginTop: 10, fontFamily: "Poppins" }}>{error}</p>}
 
-                }}
-            >Done</button>
-            
+      <form className="profile-form">
+        <div className="name-input" style={{ marginTop: "30px" }}>
+          <label htmlFor="name" style={{ fontSize: 22, fontFamily: 'Poppins', fontWeight: '600', wordWrap: 'break-word' }}>Username</label><br />
+          <input 
+            type="text" 
+            id="name"
+            value={username}
+            readOnly
+            disabled
+            style={{
+              width: 400,
+              height: 40,
+              border: "2px solid #9CA3AF",
+              backgroundColor: "#F3F4F6",
+              paddingLeft: "10px",
+              color: "#6B7280",
+              cursor: "not-allowed"
+            }}
+            placeholder="Loading..."
+          />
         </div>
-    );
-}
+
+        <div className="passwd-input" style={{ marginTop: "30px" }}>
+          <label htmlFor="passwd" style={{ fontSize: 22, fontFamily: 'Poppins', fontWeight: '600', wordWrap: 'break-word' }}>Password</label><br />
+          <div style={{ position: "relative" }}>
+            <input 
+              type="password" 
+              id="passwd"
+              disabled
+              style={{
+                width: 400,
+                height: 40,
+                border: "2px solid #3B82F6",
+                backgroundColor: "#F9FAFB",
+                paddingLeft: "10px",
+                opacity: 0.7
+              }}
+              placeholder="********"
+            />
+            <button
+              type="button"
+              onClick={handleChangePassword}
+              style={{
+                position: "absolute",
+                right: "10px",
+                top: "50%",
+                transform: "translateY(-50%)",
+                backgroundColor: "transparent",
+                border: "none",
+                color: "#3B82F6",
+                cursor: "pointer",
+                fontSize: "14px",
+                fontWeight: "600",
+                fontFamily: "Poppins"
+              }}
+            >
+              Change Password
+            </button>
+          </div>
+        </div>
+
+        <div className="bio-input" style={{ marginTop: "30px" }}>
+          <label htmlFor="bio" style={{ fontSize: 22, fontFamily: 'Poppins', fontWeight: '600', wordWrap: 'break-word' }}>Short bio</label><br />
+          <textarea 
+            id="bio"
+            value={bio}
+            onChange={(e) => setBio(e.target.value)}
+            style={{
+              width: 400,
+              height: 112,
+              border: "2px solid #3B82F6",
+              backgroundColor: "#F9FAFB",
+              paddingLeft: "10px",
+              paddingTop: "10px",
+              resize: "vertical"
+            }}
+            placeholder="Tell us about yourself..."
+          />
+        </div>
+      </form>
+      
+      <button 
+        type="button" 
+        className="btn-done"
+        onClick={handleSaveProfile}
+        style={{
+          width: 95,
+          height: 40,
+          marginTop: "40px",
+          borderRadius: "15px",
+          border: "2px solid #F9FAFB",
+          backgroundColor: "#3B82F6",
+          fontSize: 16,
+          fontFamily: 'Poppins',
+          fontWeight: '600',
+          wordWrap: 'break-word',
+          color: "#F9FAFB",
+          cursor: "pointer"
+        }}
+      >
+        Done
+      </button>
+    </div>
+  );
+};
+
 export default Profile;
