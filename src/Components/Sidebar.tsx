@@ -22,6 +22,9 @@ export default function Sidebar({ open, setOpen , onLogout}: SidebarProps) {
     // ล้าง localStorage
     localStorage.removeItem("token");
     localStorage.removeItem("userEmail");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("avatarUrl");
+    
     // call onLogout prop
     onLogout();
   };

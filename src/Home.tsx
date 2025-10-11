@@ -1,9 +1,13 @@
-import { useState } from "react";
+import { useState , useEffect } from "react";
 
 export default function Home() {
     const [activeTab, setActiveTab] = useState("For you");
 
     const tabs = ["For you", "Fashion", "Skincare"];
+
+    useEffect(() => {
+        document.title = 'Home - ItemInsight';
+    }, []);
 
     return (
         <div className="home-container" style={{ padding: "20px" }}>
