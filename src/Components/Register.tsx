@@ -22,7 +22,7 @@ export default function Register({ onRegister }: RegisterProps) {
     }
 
     try {
-      const response = await axios.post("http://localhost:5000/api/register", {
+      const response = await axios.post("https://bookish-meme-694jwvprwwxjfrx5j-5000.app.github.dev/api/register", {
         username,
         email,
         password,

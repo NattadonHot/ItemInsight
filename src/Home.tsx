@@ -7,8 +7,6 @@ export default function Home() {
 
     return (
         <div className="home-container" style={{ padding: "20px" }}>
-            <p>Hello World</p>
-
             <div className="tabs" style={{ display: "flex", gap: "20px", marginTop: "20px" }}>
                 {tabs.map((tab) => (
                     <div
