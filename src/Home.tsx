@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import PostCard from "./Components/PostCard"; // import path ให้ตรงกับไฟล์จริง
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState("For you");
@@ -8,13 +9,27 @@ export default function Home() {
     document.title = "Home - ItemInsight";
   }, []);
 
+  // สร้างตัวอย่าง post สำหรับโชว์
+  const samplePost = {
+    id: 1,
+    title: "Classic White Sneakers",
+    description: "Comfortable and stylish white sneakers perfect for everyday wear.",
+    username: "Patchara",
+    userProfile: "https://placehold.co/30x30",
+    image: "https://placehold.co/120x120",
+    likes: 10,
+    isLiked: false,
+    isFavorited: false,
+    isBookmarked: false,
+  };
+
   return (
     <div
       className="home-container"
       style={{
         display: "flex",
         flexDirection: "column",
-        alignItems: "center", // จัดแนวนอนตรงกลาง
+        alignItems: "center",
         padding: "20px",
         textAlign: "center",
       }}
@@ -59,9 +74,9 @@ export default function Home() {
       </div>
 
       <div style={{ marginTop: "30px", width: "100%", maxWidth: "600px" }}>
-        {activeTab === "For you" && <p>นี่คือหน้า For you</p>}
-        {activeTab === "Fashion" && <p>นี่คือหน้า Fashion</p>}
-        {activeTab === "Skincare" && <p>นี่คือหน้า Skincare</p>}
+        {activeTab === "For you" && <PostCard post={samplePost} />}
+        {activeTab === "Fashion" && <PostCard post={samplePost} />}
+        {activeTab === "Skincare" && <PostCard post={samplePost} />}
       </div>
     </div>
   );
