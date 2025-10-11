@@ -15,7 +15,7 @@ export default function Login({ onLogin }: LoginProps) {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post("http://localhost:3000/api/login", { email, password });
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/login`, { email, password });
 
       if (response.status === 200) {
         const { token, user } = response.data;

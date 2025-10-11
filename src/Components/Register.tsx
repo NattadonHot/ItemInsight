@@ -22,7 +22,7 @@ export default function Register({ onRegister }: RegisterProps) {
     }
 
     try {
-      const response = await axios.post("http://localhost:3000/api/register", {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/register`, {
         username,
         email,
         password,
