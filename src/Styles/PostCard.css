@@ -1,0 +1,29 @@
+@keyframes heart-pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.4); }
+  100% { transform: scale(1); }
+}
+
+@keyframes star-spin {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.2); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+@keyframes bookmark-bounce {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-5px) scale(1.1); }
+  100% { transform: translateY(0); }
+}
+
+.icon-animate-heart {
+  animation: heart-pop 0.3s ease;
+}
+
+.icon-animate-star {
+  animation: star-spin 0.3s ease;
+}
+
+.icon-animate-bookmark {
+  animation: bookmark-bounce 0.3s ease;
+}
