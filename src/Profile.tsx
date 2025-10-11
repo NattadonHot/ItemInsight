@@ -4,7 +4,7 @@ import type { ChangeEvent } from "react";
 import { useNavigate } from "react-router-dom";
 
 const MAX_FILE_SIZE_MB = 2;
-const API_URL = "http://localhost:3000";
+const API_URL = `${import.meta.env.VITE_API_URL}`;
 
 const Profile: React.FC = () => {
   const [userId, setUserId] = useState<string | null>(null);
@@ -17,7 +17,7 @@ const Profile: React.FC = () => {
   const [error, setError] = useState<string>("");
   const [uploadSuccess, setUploadSuccess] = useState<boolean>(false);
   const [bio, setBio] = useState<string>("");
-  
+
   const navigate = useNavigate();
 
   useEffect(() => {
