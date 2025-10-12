@@ -37,13 +37,15 @@ export default function PostCard({ post }: PostCardProps) {
     const [favAnim, setFavAnim] = useState(false);
     const [bookmarkAnim, setBookmarkAnim] = useState(false);
 
+    const API_URL = import.meta.env.VITE_URL_API;
+
     const handleLike = () => {
         setLiked(!liked);
         setLikesCount(liked ? likesCount - 1 : likesCount + 1);
         setLikeAnim(true);
         setTimeout(() => setLikeAnim(false), 300);
 
-        fetch(`http://localhost:5000/api/posts/${post.id}/like`, {
+        fetch(`${API_URL}/api/posts/${post.id}/like`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ like: !liked }),
@@ -55,7 +57,7 @@ export default function PostCard({ post }: PostCardProps) {
         setFavAnim(true);
         setTimeout(() => setFavAnim(false), 300);
 
-        fetch(`http://localhost:5000/api/posts/${post.id}/favorite`, {
+        fetch(`${API_URL}/api/posts/${post.id}/favorite`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ favorite: !favorited }),
@@ -67,7 +69,7 @@ export default function PostCard({ post }: PostCardProps) {
         setBookmarkAnim(true);
         setTimeout(() => setBookmarkAnim(false), 300);
 
-        fetch(`http://localhost:5000/api/posts/${post.id}/bookmark`, {
+        fetch(`${API_URL}/api/posts/${post.id}/bookmark`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ bookmark: !bookmarked }),
