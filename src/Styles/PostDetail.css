@@ -1,0 +1,270 @@
+/* Container */
+.detail-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  max-width: 800px;
+  margin: 120px auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* Title & Subtitle */
+.detail-title {
+  font-size: 28px;
+  font-weight: bold;
+  text-align: left;
+  margin: -15px 0 0 0;
+  width: 100%;
+}
+
+.detail-subtitle {
+  color: #666;
+  font-size: 16px;
+  text-align: left;
+  margin: 10px 0 20px 0;
+  width: 100%;
+}
+
+/* User info */
+.detail-user {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.detail-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.detail-username {
+  font-weight: medium;
+  font-size: 16px;
+}
+
+.detail-date {
+  color: #888;
+  font-size: 14px;
+}
+
+/* Images */
+.detail-image {
+  width: 369px;
+  height: 369px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.image-with-text {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+
+/*ใช้*/
+.detail-block {
+  margin-bottom: 10px;
+}
+
+
+
+/* Loading/Error */
+.loading, .error, .not-found {
+  text-align: center;
+  margin-top: 80px;
+}
+
+/* HR */
+hr {
+  border: none;
+  border-top: 1px solid #0a0a0a;
+  width: 100%;
+  margin: 12px 0;
+}
+
+/* Action bar */
+.action-icons-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.action-icons-left,
+.action-icons-right {
+  display: flex;
+  gap: 14px; /* ช่องว่างระหว่างปุ่ม */
+  align-items: center;
+}
+
+
+/* Icon buttons */
+.icon-button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: #444;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.icon-button:hover {
+  color: #000;
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+}
+
+.icon.liked {
+  fill: #ff5a5a;
+  stroke: #ff5a5a;
+}
+
+/* Cart dropdown */
+.cart-dropdown {
+  position: relative;
+}
+
+.cart-menu {
+  position: absolute;
+  top: 28px;
+  left: 0;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  min-width: 180px;
+  z-index: 10;
+  opacity: 0;
+  transform: translateY(-5px);
+  pointer-events: none;
+  transition: all 0.2s ease-out;
+}
+
+.cart-dropdown.show .cart-menu {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.cart-item {
+  display: block;
+  padding: 8px 12px;
+  color: #333;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.cart-item:hover {
+  background: #f3f3f3;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .detail-container { padding: 12px; margin: 60px auto; }
+  .detail-title { font-size: 22px; }
+  .detail-subtitle { font-size: 14px; }
+  .icon { width: 18px; height: 18px; }
+}
+
+/* ❤️ Like button */
+.icon-button.like-button .icon {
+  transition: transform 0.2s ease, fill 0.3s ease, stroke 0.3s ease;
+}
+
+/* Hover effect */
+.icon-button.like-button:hover .icon {
+  transform: translateY(-3px);
+}
+
+/* กดแล้วหัวใจเต็มสีแดง */
+.icon-button.like-button.liked .icon {
+  fill: #ff3b3b;
+  stroke: #ff3b3b;
+  transform: scale(1.2);
+  animation: pop 0.3s ease;
+}
+
+@keyframes pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.5); }
+  100% { transform: scale(1.1); }
+}
+
+/* 💬 Comment button hover */
+.icon-button.comment-button .icon {
+  transition: transform 0.2s ease, fill 0.3s ease, stroke 0.3s ease;
+}
+
+.icon-button.comment-button:hover .icon {
+  transform: translateY(-3px);
+  stroke: #0077ff;
+}
+
+/* 💚 Bookmark button */
+.icon-button.bookmark-button .icon {
+  transition: transform 0.3s ease, fill 0.3s ease, stroke 0.3s ease;
+}
+
+/* Hover effect */
+.icon-button.bookmark-button:hover .icon {
+  transform: translateY(-3px);
+}
+
+/* กดแล้วไอคอนเต็มสีเขียว */
+.icon-button.bookmark-button.bookmarked .icon {
+  fill: #2ecc71;
+  stroke: #2ecc71;
+  transform: rotate(-10deg) scale(1.1);
+}
+
+/* 🛒 Cart hover */
+.cart-button:hover .icon {
+  transform: translateY(-3px);
+  transition: transform 0.2s ease;
+}
+
+/* 🔗 Share shake animation */
+@keyframes shake {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(8deg); }
+  50% { transform: rotate(-8deg); }
+  75% { transform: rotate(8deg); }
+}
+
+.icon-button.share-button:hover .icon {
+  animation: shake 0.4s ease;
+}
+
+/* ปรับ transition รวมๆ ให้ทุกปุ่ม smooth */
+.icon-button .icon {
+  transition: all 0.25s ease;
+}
+
+.platform-logo {
+  width: 16px;       /* ปรับจาก 20px → 16px */
+  height: 16px;      /* ให้สมส่วน */
+  object-fit: contain;
+  vertical-align: middle;
+  opacity: 0.9;      /* ลดความเข้มเล็กน้อยให้ดูนุ่มตา */
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.cart-item:hover .platform-logo {
+  transform: scale(1.05);
+  opacity: 1;
+}
