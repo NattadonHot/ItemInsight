@@ -2,8 +2,6 @@ import { useState } from "react";
 import {
     FaHeart,
     FaRegHeart,
-    FaStar,
-    FaRegStar,
     FaBookmark,
     FaRegBookmark,
 } from "react-icons/fa";
@@ -19,7 +17,6 @@ interface Post {
     image?: string;
     likes?: number;
     isLiked?: boolean;
-    isFavorited?: boolean;
     isBookmarked?: boolean;
 }
 
@@ -30,11 +27,8 @@ interface PostCardProps {
 export default function PostCard({ post }: PostCardProps) {
     const [liked, setLiked] = useState(post.isLiked || false);
     const [likesCount, setLikesCount] = useState(post.likes || 0);
-    const [favorited, setFavorited] = useState(post.isFavorited || false);
     const [bookmarked, setBookmarked] = useState(post.isBookmarked || false);
-
     const [likeAnim, setLikeAnim] = useState(false);
-    const [favAnim, setFavAnim] = useState(false);
     const [bookmarkAnim, setBookmarkAnim] = useState(false);
 
     const API_URL = import.meta.env.VITE_URL_API;
@@ -49,18 +43,6 @@ export default function PostCard({ post }: PostCardProps) {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ like: !liked }),
-        }).catch(console.error);
-    };
-
-    const handleFavorite = () => {
-        setFavorited(!favorited);
-        setFavAnim(true);
-        setTimeout(() => setFavAnim(false), 300);
-
-        fetch(`${API_URL}/api/posts/${post.id}/favorite`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ favorite: !favorited }),
         }).catch(console.error);
     };
 
@@ -126,20 +108,6 @@ export default function PostCard({ post }: PostCardProps) {
                     >
                         {liked ? <FaHeart /> : <FaRegHeart />}
                         <span style={{ marginLeft: 5 }}>{likesCount} likes</span>
-                    </button>
-
-                    <button
-                        onClick={handleFavorite}
-                        className={favAnim ? "icon-animate-star" : ""}
-                        style={{
-                            background: "none",
-                            border: "none",
-                            cursor: "pointer",
-                            color: favorited ? "gold" : "#555",
-                            marginLeft: 10,
-                        }}
-                    >
-                        {favorited ? <FaStar /> : <FaRegStar />}
                     </button>
 
                     <button

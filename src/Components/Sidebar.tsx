@@ -3,7 +3,6 @@ import {
   FaHome,
   FaCog,
   FaBookmark,
-  FaStar,
   FaPen,
 } from "react-icons/fa";
 import { CiLogout } from "react-icons/ci";
@@ -43,9 +42,6 @@ export default function Sidebar({ open, setOpen , onLogout}: SidebarProps) {
         </Link>
         <Link to="/bookmarks" className="sidebar-link" onClick={() => setOpen(false)}>
           <FaBookmark /> Bookmark
-        </Link>
-        <Link to="/favorites" className="sidebar-link" onClick={() => setOpen(false)}>
-          <FaStar /> Favorite
         </Link>
         <Link to="/settings" className="sidebar-link" onClick={() => setOpen(false)}>
           <FaCog /> Setting
