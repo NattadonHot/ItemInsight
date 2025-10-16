@@ -8,6 +8,7 @@ import Login from "./Components/Login";
 import Register from "./Components/Register";
 import ProtectedRoute from "./Components/ProtectedRoute";
 import Write from "./Write";
+import PostDetail from "./PostDetail";
 
 export default function App() {
   const [open, setOpen] = useState(false);
@@ -21,7 +22,7 @@ export default function App() {
   }, []);
 
   const handleLogin = () => setIsLoggedIn(true);
-  
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("userEmail");
@@ -45,8 +46,8 @@ export default function App() {
 
   return (
     <div className="app">
-      <Header open={open} setOpen={setOpen} onLogout={handleLogout}/>
-      <Sidebar open={open} setOpen={setOpen} onLogout={handleLogout}/>
+      <Header open={open} setOpen={setOpen} onLogout={handleLogout} />
+      <Sidebar open={open} setOpen={setOpen} onLogout={handleLogout} />
       <div className="main-content" onClick={() => setOpen(false)}>
         <Routes>
           {/* ✅ เพิ่ม ProtectedRoute สำหรับแต่ละ route */}
@@ -65,6 +66,12 @@ export default function App() {
               <Write />
             </ProtectedRoute>
           } />
+          <Route path="/posts/:id" element={
+            <ProtectedRoute isLoggedIn={isLoggedIn}>
+              <PostDetail />
+            </ProtectedRoute>
+          } />
+
           <Route path="*" element={<Navigate to="/home" />} />
         </Routes>
       </div>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import {
     FaHeart,
     FaRegHeart,
@@ -72,9 +73,9 @@ export default function PostCard({ post }: PostCardProps) {
             }}
         >
             <div style={{ flex: 1, textAlign: "left" }}>
-                <h3 style={{ fontSize: "18px", fontWeight: "600", marginBottom: "10px",marginTop: "-2px"}}>
+                <Link to={`/posts/${post.id}`} className="post-title">
                     {post.title}
-                </h3>
+                </Link>
                 <p style={{ color: "#555", fontSize: "14px", margin: "15px 0 10px" }}>
                     {post.description}
                 </p>
