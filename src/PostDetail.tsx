@@ -148,6 +148,9 @@ export default function PostDetail() {
                                     } else if (lowerUrl.includes("lazada")) {
                                         platformLogo = "https://upload.wikimedia.org/wikipedia/commons/3/3a/Lazada_%282019%29.svg";
                                         platformName = "Lazada";
+                                    } else if (lowerUrl.includes("apple")) {
+                                        platformLogo = "https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg";
+                                        platformName = "Apple";
                                     } else {
                                         platformLogo = "https://cdn-icons-png.flaticon.com/512/126/126122.png";
                                         platformName = "Shop";

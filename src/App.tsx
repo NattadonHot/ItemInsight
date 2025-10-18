@@ -9,6 +9,7 @@ import Register from "./Components/Register";
 import ProtectedRoute from "./Components/ProtectedRoute";
 import Write from "./Write";
 import PostDetail from "./PostDetail";
+import MyPosts from "./Myposts";
 
 export default function App() {
   const [open, setOpen] = useState(false);
@@ -69,6 +70,11 @@ export default function App() {
           <Route path="/posts/:id" element={
             <ProtectedRoute isLoggedIn={isLoggedIn}>
               <PostDetail />
+            </ProtectedRoute>
+          } />
+          <Route path="/myposts" element={
+            <ProtectedRoute isLoggedIn={isLoggedIn}>
+              <MyPosts />
             </ProtectedRoute>
           } />
 
