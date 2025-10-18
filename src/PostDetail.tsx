@@ -1,6 +1,13 @@
-import { Heart, MessageCircle, ShoppingCart, Bookmark, Share2, MoreHorizontal } from "lucide-react";
+import {
+    Heart,
+    MessageCircle,
+    ShoppingCart,
+    Bookmark,
+    Share2,
+    MoreHorizontal,
+} from "lucide-react";
 import { useEffect, useState, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import "./Styles/PostDetail.css";
 
 interface Block {
@@ -23,6 +30,7 @@ interface UserInfo {
 
 interface Post {
     _id: string;
+    slug: string;
     title: string;
     subtitle?: string;
     userId?: UserInfo;
@@ -32,9 +40,9 @@ interface Post {
     productLinks?: ProductLink[];
 }
 
-
 export default function PostDetail() {
-    const { id } = useParams();
+    const { slug } = useParams<{ slug: string }>();
+    const navigate = useNavigate();
     const [post, setPost] = useState<Post | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -48,12 +56,21 @@ export default function PostDetail() {
     const [showCartLinks, setShowCartLinks] = useState(false);
     const cartRef = useRef<HTMLDivElement>(null);
 
+    const [showMoreMenu, setShowMoreMenu] = useState(false);
+    const moreRef = useRef<HTMLDivElement>(null);
+
+    const currentUsername = localStorage.getItem("username") || "";
+    const token = localStorage.getItem("token");
+
+    // Fetch post by slug
     useEffect(() => {
         const fetchPost = async () => {
+            if (!slug) return;
             try {
                 setLoading(true);
-                const response = await fetch(`${API_URL}/api/posts/${id}`);
+                const response = await fetch(`${API_URL}/api/posts/slug/${slug}`);
                 const result = await response.json();
+
                 if (result.success) setPost(result.data as Post);
                 else setError(result.message || "Failed to fetch post");
             } catch (err: unknown) {
@@ -64,12 +81,16 @@ export default function PostDetail() {
             }
         };
         fetchPost();
-    }, [id]);
+    }, [slug, API_URL]);
 
+    // Click outside dropdowns
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
             if (cartRef.current && !cartRef.current.contains(event.target as Node)) {
                 setShowCartLinks(false);
+            }
+            if (moreRef.current && !moreRef.current.contains(event.target as Node)) {
+                setShowMoreMenu(false);
             }
         }
         document.addEventListener("mousedown", handleClickOutside);
@@ -88,9 +109,35 @@ export default function PostDetail() {
         }
     };
 
+    const handleDeletePost = async () => {
+        if (!post) return;
+        if (!confirm("คุณแน่ใจว่าจะลบโพสต์นี้?")) return;
+
+        try {
+            const res = await fetch(`${API_URL}/api/posts/${post._id}`, {
+                method: "DELETE",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            const result = await res.json();
+            if (result.success) {
+                alert("ลบโพสต์สำเร็จ ✅");
+                navigate("/home");
+            } else {
+                alert(result.message || "เกิดข้อผิดพลาดในการลบโพสต์");
+            }
+        } catch (err) {
+            console.error(err);
+            alert("เกิดข้อผิดพลาด");
+        }
+    };
+
     if (loading) return <p className="loading">Loading post...</p>;
     if (error) return <p className="error">❌ {error}</p>;
     if (!post) return <p className="not-found">Post not found.</p>;
+
+    const isOwner = post.userId?.username === currentUsername;
 
     return (
         <div className="detail-container">
@@ -98,10 +145,20 @@ export default function PostDetail() {
             {post.subtitle && <p className="detail-subtitle">{post.subtitle}</p>}
 
             <div className="detail-user">
-                <img src={post.userId?.avatarUrl || "https://placehold.co/40x40"} alt="User avatar" className="detail-avatar" />
-                <span className="detail-username">{post.userId?.username || "Anonymous"}</span>
+                <img
+                    src={post.userId?.avatarUrl || "https://placehold.co/40x40"}
+                    alt="User avatar"
+                    className="detail-avatar"
+                />
+                <span className="detail-username">
+                    {post.userId?.username || "Anonymous"}
+                </span>
                 <span className="detail-date">
-                    {new Intl.DateTimeFormat("en-US", { year: "numeric", month: "short", day: "2-digit" }).format(new Date(post.createdAt))}
+                    {new Intl.DateTimeFormat("en-US", {
+                        year: "numeric",
+                        month: "short",
+                        day: "2-digit",
+                    }).format(new Date(post.createdAt))}
                 </span>
             </div>
 
@@ -127,7 +184,11 @@ export default function PostDetail() {
                 </div>
 
                 <div className="action-icons-right">
-                    <div className={`cart-dropdown ${showCartLinks ? "show" : ""}`} ref={cartRef}>
+                    {/* Cart Dropdown */}
+                    <div
+                        className={`cart-dropdown ${showCartLinks ? "show" : ""}`}
+                        ref={cartRef}
+                    >
                         <button
                             className="icon-button cart-button"
                             onClick={() => setShowCartLinks(!showCartLinks)}
@@ -135,21 +196,24 @@ export default function PostDetail() {
                             <ShoppingCart className="icon" />
                         </button>
 
-                        {showCartLinks && post.productLinks && post.productLinks.length > 0 && (
-                            <div className="cart-menu">
+                        {post.productLinks && post.productLinks.length > 0 && (
+                            <div className={`cart-menu ${showCartLinks ? "show" : ""}`}>
                                 {post.productLinks.map((link, idx) => {
                                     const lowerUrl = link.url.toLowerCase();
                                     let platformLogo = "";
                                     let platformName = "";
 
                                     if (lowerUrl.includes("shopee")) {
-                                        platformLogo = "https://upload.wikimedia.org/wikipedia/commons/0/0e/Shopee_logo.svg";
+                                        platformLogo =
+                                            "https://upload.wikimedia.org/wikipedia/commons/0/0e/Shopee_logo.svg";
                                         platformName = "Shopee";
                                     } else if (lowerUrl.includes("lazada")) {
-                                        platformLogo = "https://upload.wikimedia.org/wikipedia/commons/3/3a/Lazada_%282019%29.svg";
+                                        platformLogo =
+                                            "https://upload.wikimedia.org/wikipedia/commons/3/3a/Lazada_%282019%29.svg";
                                         platformName = "Lazada";
                                     } else {
-                                        platformLogo = "https://cdn-icons-png.flaticon.com/512/126/126122.png";
+                                        platformLogo =
+                                            "https://cdn-icons-png.flaticon.com/512/126/126122.png";
                                         platformName = "Shop";
                                     }
 
@@ -174,7 +238,6 @@ export default function PostDetail() {
                         )}
                     </div>
 
-
                     <button
                         className={`icon-button bookmark-button ${bookmarked ? "bookmarked" : ""}`}
                         onClick={() => setBookmarked(!bookmarked)}
@@ -182,13 +245,30 @@ export default function PostDetail() {
                         <Bookmark className="icon" />
                     </button>
 
-                    <button className="icon-button share-button" onClick={handleShare}>
+                    <button
+                        className="icon-button share-button"
+                        onClick={handleShare}
+                    >
                         <Share2 className="icon" />
                     </button>
 
-                    <button className="icon-button">
-                        <MoreHorizontal className="icon" />
-                    </button>
+                    {/* More dropdown สำหรับเจ้าของโพสต์ */}
+                    {isOwner && (
+                        <div className="more-dropdown" ref={moreRef}>
+                            <button
+                                className="icon-button more-button"
+                                onClick={() => setShowMoreMenu(!showMoreMenu)}
+                            >
+                                <MoreHorizontal className="icon" />
+                            </button>
+
+                            <div className={`cart-menu ${showMoreMenu ? "show" : ""}`}>
+                                <button className="cart-item delete-button" onClick={handleDeletePost}>
+                                    Delete Post
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -196,9 +276,15 @@ export default function PostDetail() {
 
             {post.images?.map((img, idx) => (
                 <div key={idx} className="image-with-text">
-                    <img src={img.url} alt={`Post image ${idx + 1}`} className="detail-image" />
+                    <img
+                        src={img.url}
+                        alt={`Post image ${idx + 1}`}
+                        className="detail-image"
+                    />
                     {post.blocks?.[idx] && (
-                        <p className="detail-block">{post.blocks[idx].data?.text || ""}</p>
+                        <p className="detail-block">
+                            {post.blocks[idx].data?.text || ""}
+                        </p>
                     )}
                 </div>
             ))}

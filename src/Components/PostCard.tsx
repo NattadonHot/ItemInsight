@@ -12,6 +12,7 @@ import "../Styles/PostCard.css";
 interface Post {
     id: number | string;
     title: string;
+    slug: string;
     description: string;
     userProfile?: string;
     username: string;
@@ -73,7 +74,7 @@ export default function PostCard({ post }: PostCardProps) {
             }}
         >
             <div style={{ flex: 1, textAlign: "left" }}>
-                <Link to={`/posts/${post.id}`} className="post-title">
+                <Link to={`/posts/${post.slug}`} className="post-title">
                     {post.title}
                 </Link>
                 <p style={{ color: "#555", fontSize: "14px", margin: "15px 0 10px" }}>

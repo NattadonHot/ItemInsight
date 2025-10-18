@@ -66,7 +66,7 @@ export default function App() {
               <Write />
             </ProtectedRoute>
           } />
-          <Route path="/posts/:id" element={
+          <Route path="/posts/:slug" element={
             <ProtectedRoute isLoggedIn={isLoggedIn}>
               <PostDetail />
             </ProtectedRoute>
