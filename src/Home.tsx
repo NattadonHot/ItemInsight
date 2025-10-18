@@ -3,6 +3,7 @@ import PostCard from "./Components/PostCard";
 
 interface Post {
   _id: string;
+  slug: string;
   title: string;
   subtitle?: string;
   userId?: {
@@ -88,6 +89,7 @@ export default function Home() {
   const transformPostForCard = (post: Post) => {
     return {
       id: post._id,
+      slug: post.slug,
       title: post.title,
       description: post.subtitle || "",
       username: post.userId?.username || "Anonymous",
