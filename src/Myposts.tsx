@@ -3,6 +3,7 @@ import PostCard from "./Components/PostCard";
 
 interface Post {
   _id: string;
+  slug?: string; // ถ้า backend มี slug
   title: string;
   subtitle?: string;
   userId?: {
@@ -23,7 +24,8 @@ export default function MyPosts() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const API_URL = import.meta.env.VITE_URL_API;
+  const API_URL = import.meta.env.VITE_URL_API || "http://localhost:3000";
+
   const userId = localStorage.getItem("userId");
   const token = localStorage.getItem("token");
 
@@ -43,16 +45,21 @@ export default function MyPosts() {
       setLoading(true);
       setError(null);
 
+      // URL backend จริง
       const apiUrl = `${API_URL}/api/posts/user/${userId}`;
       console.log("Fetching my posts from:", apiUrl);
 
       const response = await fetch(apiUrl, {
         headers: {
           Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
       });
 
+      // ถ้าไม่ ok, log text เพื่อ debug
       if (!response.ok) {
+        const text = await response.text();
+        console.error("API error response:", text);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
@@ -72,20 +79,19 @@ export default function MyPosts() {
     }
   };
 
-  const transformPostForCard = (post: Post) => {
-    return {
-      id: post._id,
-      title: post.title,
-      description: post.subtitle || "",
-      username: post.userId?.username || "You",
-      userProfile: post.userId?.avatarUrl || "https://placehold.co/30x30",
-      image: post.images?.[0]?.url || "https://placehold.co/120x120",
-      likes: post.likesCount || 0,
-      isLiked: false,
-      isFavorited: false,
-      isBookmarked: false,
-    };
-  };
+  const transformPostForCard = (post: Post) => ({
+    id: post._id,
+    slug: post.slug || post._id, // ใช้ slug ถ้ามี, fallback เป็น _id
+    title: post.title,
+    description: post.subtitle || "",
+    username: post.userId?.username || "You",
+    userProfile: post.userId?.avatarUrl || "https://placehold.co/30x30",
+    image: post.images?.[0]?.url || "https://placehold.co/120x120",
+    likes: post.likesCount || 0,
+    isLiked: false,
+    isFavorited: false,
+    isBookmarked: false,
+  });
 
   return (
     <div
@@ -100,7 +106,6 @@ export default function MyPosts() {
         marginTop: "70px",
       }}
     >
-      {/* Title */}
       <h2
         style={{
           fontSize: "24px",
@@ -112,7 +117,6 @@ export default function MyPosts() {
         My Posts
       </h2>
 
-      {/* Content */}
       <div style={{ width: "100%" }}>
         {loading && <p style={{ textAlign: "center" }}>Loading your posts...</p>}
 
@@ -140,7 +144,7 @@ export default function MyPosts() {
         )}
 
         {!loading && !error && posts.length > 0 && (
-          <div style={{ display: "flex", flexDirection: "column", gap: "0" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
             {posts.map((post) => (
               <PostCard key={post._id} post={transformPostForCard(post)} />
             ))}

@@ -108,7 +108,7 @@ export default function Write() {
       // 2. ลบบรรทัดที่ส่ง userId ออก! เพราะ Backend จะหาเองจาก Token
       // formData.append("userId", currentUser._id); // <-- ลบบรรทัดนี้
 
-      const response = await axios.post("http://localhost:5000/api/posts", formData, {
+      const response = await axios.post("http://localhost:3000/api/posts", formData, {
         headers: { 
           "Content-Type": "multipart/form-data",
           // 3. เพิ่ม Authorization Header เพื่อส่ง Token ไปให้ Backend ตรวจสอบ
