@@ -1,4 +1,4 @@
-/* Container */
+/* Container */ 
 .detail-container {
   display: flex;
   flex-direction: column;
@@ -122,14 +122,47 @@ hr {
 .icon {
   width: 20px;
   height: 20px;
+  transition: all 0.3s ease;
 }
 
-.icon.liked {
-  fill: #ff5a5a;
-  stroke: #ff5a5a;
+/* Like button */
+.icon-button.like-button .icon {
+  transition: transform 0.2s ease, fill 0.3s ease, stroke 0.3s ease;
 }
 
-/* Cart dropdown */
+.icon-button.like-button:hover .icon {
+  transform: translateY(-3px);
+}
+
+.icon-button.like-button.liked .icon {
+  fill: #ff3b3b;
+  stroke: #ff3b3b;
+  transform: scale(1.2);
+  animation: pop 0.3s ease;
+}
+
+@keyframes pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.5); }
+  100% { transform: scale(1.1); }
+}
+
+/* Bookmark button */
+.icon-button.bookmark-button .icon {
+  transition: transform 0.3s ease, fill 0.3s ease, stroke 0.3s ease;
+}
+
+.icon-button.bookmark-button:hover .icon {
+  transform: translateY(-3px);
+}
+
+.icon-button.bookmark-button.bookmarked .icon {
+  fill: #2ecc71;
+  stroke: #2ecc71;
+  transform: rotate(-10deg) scale(1.1);
+}
+
+/* Cart dropdown & More dropdown */
 .cart-dropdown,
 .more-dropdown {
   position: relative;
@@ -183,93 +216,7 @@ hr {
   opacity: 1;
 }
 
-/* Responsive */
-@media (max-width: 640px) {
-  .detail-container { padding: 12px; margin: 60px auto; }
-  .detail-title { font-size: 22px; }
-  .detail-subtitle { font-size: 14px; }
-  .icon { width: 18px; height: 18px; }
-}
-
-/* Like button */
-.icon-button.like-button .icon {
-  transition: transform 0.2s ease, fill 0.3s ease, stroke 0.3s ease;
-}
-
-.icon-button.like-button:hover .icon {
-  transform: translateY(-3px);
-}
-
-.icon-button.like-button.liked .icon {
-  fill: #ff3b3b;
-  stroke: #ff3b3b;
-  transform: scale(1.2);
-  animation: pop 0.3s ease;
-}
-
-@keyframes pop {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.5); }
-  100% { transform: scale(1.1); }
-}
-
-/* Comment button */
-.icon-button.comment-button .icon {
-  transition: transform 0.2s ease, fill 0.3s ease, stroke 0.3s ease;
-}
-
-.icon-button.comment-button:hover .icon {
-  transform: translateY(-3px);
-  stroke: #0077ff;
-}
-
-/* Bookmark */
-.icon-button.bookmark-button .icon {
-  transition: transform 0.3s ease, fill 0.3s ease, stroke 0.3s ease;
-}
-
-.icon-button.bookmark-button:hover .icon {
-  transform: translateY(-3px);
-}
-
-.icon-button.bookmark-button.bookmarked .icon {
-  fill: #2ecc71;
-  stroke: #2ecc71;
-  transform: rotate(-10deg) scale(1.1);
-}
-
-/* Cart hover */
-.cart-button:hover .icon {
-  transform: translateY(-3px);
-  transition: transform 0.2s ease;
-}
-
-.cart-button .icon {
-  transition: transform 0.3s ease, fill 0.3s ease, stroke 0.3s ease;
-}
-
-/* Share shake */
-@keyframes shake {
-  0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(8deg); }
-  50% { transform: rotate(-8deg); }
-  75% { transform: rotate(8deg); }
-}
-
-.icon-button.share-button:hover .icon {
-  animation: shake 0.4s ease;
-}
-
-/* More dropdown button */
-.more-dropdown .more-button:hover .icon {
-  transform: translateY(-3px);
-  transition: transform 0.2s ease;
-}
-.more-dropdown .more-button .icon {
-  transition: transform 0.3s ease, fill 0.3s ease, stroke 0.3s ease;
-}
-
-/* Delete button inside More dropdown */
+/* More dropdown Delete button */
 .delete-button {
   display: block;
   width: 100%;
@@ -287,4 +234,190 @@ hr {
 .delete-button:hover {
   background: #fee;
   color: #900;
+}
+
+/* Share shake */
+@keyframes shake {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(8deg); }
+  50% { transform: rotate(-8deg); }
+  75% { transform: rotate(8deg); }
+}
+
+.icon-button.share-button:hover .icon {
+  animation: shake 0.4s ease;
+}
+
+/* Comment button */
+.icon-button.comment-button .icon {
+  transition: transform 0.2s ease, fill 0.3s ease, stroke 0.3s ease;
+}
+
+.icon-button.comment-button:hover .icon {
+  transform: translateY(-3px);
+  stroke: #0077ff;
+}
+
+/* Animations for clicks */
+.icon-animate-heart {
+  animation: pop 0.3s ease;
+}
+
+.icon-animate-bookmark {
+  animation: pop-bookmark 0.3s ease;
+}
+
+@keyframes pop-bookmark {
+  0% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.4) rotate(-10deg); }
+  100% { transform: scale(1.1) rotate(-5deg); }
+}
+
+/* Comment Section */
+.comments-section {
+  margin-top: 20px;
+  width: 100%;
+}
+
+.comment-card {
+  background: #f9f9f9;
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.comment-date {
+  font-size: 12px;
+  color: #666;
+}
+
+.comments-section textarea {
+  width: 100%;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #0077ff;
+  margin-top: 10px;
+}
+
+.comments-section button {
+  margin-top: 6px;
+  padding: 2px 6px;
+  background: #0077ff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.comments-section button:hover {
+  background: #acaeaf;
+  opacity: 0.2;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .detail-container { padding: 12px; margin: 60px auto; }
+  .detail-title { font-size: 22px; }
+  .detail-subtitle { font-size: 14px; }
+  .icon { width: 18px; height: 18px; }
+}
+
+/* ============================= */
+/* Comment Menu (⋯) - สำหรับ Edit/Delete */
+/* ============================= */
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.comment-card {
+  position: relative;
+  background: #f9f9f9;
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+/* ส่วนบนของคอมเมนต์ (ชื่อ + เมนู ⋯) */
+.comment-card strong {
+  font-size: 14px;
+  color: #222;
+}
+
+.comment-date {
+  font-size: 12px;
+  color: #777;
+  margin-top: 2px;
+}
+
+.comment-menu-wrapper {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+}
+
+.more-button {
+  background: #0077ff;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  transition: background 0.2s ease;
+}
+
+.more-button:hover {
+  background: rgba(185, 183, 183, 0.08);
+}
+
+/* ไอคอนสามจุด */
+.more-button .icon {
+  width: 18px;
+  height: 18px;
+  stroke: white;
+}
+
+/* เมนู dropdown */
+.comment-menu {
+  position: absolute;
+  top: 26px;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  animation: fadeIn 0.15s ease;
+}
+
+.comment-menu button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 8px 12px;
+  background: none;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.comment-menu button:hover {
+  background: #f3f3f3;
+}
+
+/* ปุ่ม Delete สีแดง */
+.comment-menu button:last-child {
+  color: #c00;
+}
+
+.comment-menu button:last-child:hover {
+  background: #fee;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
 }

@@ -8,9 +8,8 @@ import {
 } from "react-icons/fa";
 import "../Styles/PostCard.css";
 
-// กำหนด interface ของ post
 interface Post {
-    id: number | string;
+    id: string;
     title: string;
     slug: string;
     description: string;
@@ -24,9 +23,14 @@ interface Post {
 
 interface PostCardProps {
     post: Post;
+    onToggleLike?: () => Promise<void>;       // เพิ่ม props สำหรับฟังก์ชันจาก parent
+    onToggleBookmark?: () => Promise<void>;   // เพิ่ม props สำหรับฟังก์ชันจาก parent
 }
 
-export default function PostCard({ post }: PostCardProps) {
+// ✅ ตัวอย่าง: สมมติว่าเราเก็บ userId ไว้ใน localStorage หลัง login
+const getCurrentUserId = () => localStorage.getItem("userId");
+
+export default function PostCard({ post, onToggleLike, onToggleBookmark }: PostCardProps) {
     const [liked, setLiked] = useState(post.isLiked || false);
     const [likesCount, setLikesCount] = useState(post.likes || 0);
     const [bookmarked, setBookmarked] = useState(post.isBookmarked || false);
@@ -34,30 +38,47 @@ export default function PostCard({ post }: PostCardProps) {
     const [bookmarkAnim, setBookmarkAnim] = useState(false);
 
     const API_URL = import.meta.env.VITE_URL_API;
+    const userId = getCurrentUserId();
 
-    const handleLike = () => {
+    // ✅ ฟังก์ชัน toggle like
+    const handleLike = async () => {
+        if (!userId) return alert("กรุณาเข้าสู่ระบบก่อนกดถูกใจ ❤️");
+
         setLiked(!liked);
         setLikesCount(liked ? likesCount - 1 : likesCount + 1);
         setLikeAnim(true);
         setTimeout(() => setLikeAnim(false), 300);
 
-        fetch(`${API_URL}/api/posts/${post.id}/like`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ like: !liked }),
-        }).catch(console.error);
+        try {
+            await fetch(`${API_URL}/api/posts/${post.id}/like`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ userId }),
+            });
+            if (onToggleLike) await onToggleLike();
+        } catch (err) {
+            console.error("Error toggling like:", err);
+        }
     };
 
-    const handleBookmark = () => {
+    // ✅ ฟังก์ชัน toggle bookmark
+    const handleBookmark = async () => {
+        if (!userId) return alert("กรุณาเข้าสู่ระบบก่อนกดบุ๊คมาร์ก 📑");
+
         setBookmarked(!bookmarked);
         setBookmarkAnim(true);
         setTimeout(() => setBookmarkAnim(false), 300);
 
-        fetch(`${API_URL}/api/posts/${post.id}/bookmark`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ bookmark: !bookmarked }),
-        }).catch(console.error);
+        try {
+            await fetch(`${API_URL}/api/posts/${post.id}/bookmark`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ userId }),
+            });
+            if (onToggleBookmark) await onToggleBookmark();
+        } catch (err) {
+            console.error("Error toggling bookmark:", err);
+        }
     };
 
     return (
@@ -80,6 +101,7 @@ export default function PostCard({ post }: PostCardProps) {
                 <p style={{ color: "#555", fontSize: "14px", margin: "15px 0 10px" }}>
                     {post.description}
                 </p>
+
                 <div
                     style={{
                         display: "flex",
@@ -96,6 +118,7 @@ export default function PostCard({ post }: PostCardProps) {
                     <span style={{ fontWeight: 500 }}>{post.username}</span>
                     <span style={{ margin: "0 8px", color: "#aaa" }}>|</span>
 
+                    {/* ❤️ ปุ่มกด Like */}
                     <button
                         onClick={handleLike}
                         className={likeAnim ? "icon-animate-heart" : ""}
@@ -112,6 +135,7 @@ export default function PostCard({ post }: PostCardProps) {
                         <span style={{ marginLeft: 5 }}>{likesCount} likes</span>
                     </button>
 
+                    {/* 📑 ปุ่มกด Bookmark */}
                     <button
                         onClick={handleBookmark}
                         className={bookmarkAnim ? "icon-animate-bookmark" : ""}
@@ -136,6 +160,5 @@ export default function PostCard({ post }: PostCardProps) {
                 />
             </div>
         </div>
-
     );
 }

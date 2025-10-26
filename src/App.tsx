@@ -10,6 +10,7 @@ import ProtectedRoute from "./Components/ProtectedRoute";
 import Write from "./Write";
 import PostDetail from "./PostDetail";
 import MyPosts from "./Myposts";
+import Bookmark from "./Bookmark";
 
 export default function App() {
   const [open, setOpen] = useState(false);
@@ -77,7 +78,11 @@ export default function App() {
               <MyPosts />
             </ProtectedRoute>
           } />
-
+          <Route path="/bookmarks" element={
+            <ProtectedRoute isLoggedIn={isLoggedIn}>
+              <Bookmark />
+            </ProtectedRoute>
+          } />
           <Route path="*" element={<Navigate to="/home" />} />
         </Routes>
       </div>
