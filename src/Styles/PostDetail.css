@@ -1,4 +1,4 @@
-/* Container */ 
+/* Container */
 .detail-container {
   display: flex;
   flex-direction: column;
@@ -8,7 +8,7 @@
   margin: 120px auto;
   background: #fff;
   border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 /* Title & Subtitle */
@@ -55,25 +55,74 @@
   font-size: 14px;
 }
 
-/* Images */
+/* --- STYLES FOR POST CONTENT (NEW/UPDATED) --- */
+
+/* Container for all images */
+.detail-images-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 25px; /* Space before text blocks */
+}
+
+/* Responsive Image Style (Updated) */
 .detail-image {
-  width: 369px;
-  height: 369px;
+  width: 100%;
+  height: auto; /* Maintain aspect ratio */
   border-radius: 10px;
   object-fit: cover;
 }
 
+/* This class may no longer be used by the new TSX, but we keep it */
 .image-with-text {
   margin-bottom: 1.5rem;
   text-align: center;
 }
 
-.detail-block {
-  margin-bottom: 10px;
+/* Container for all text blocks */
+.detail-blocks-container {
+  width: 100%;
 }
 
+/* Style for each paragraph (Updated) */
+.detail-block {
+  font-size: 16px;
+  line-height: 1.7; /* Better readability */
+  color: #333;
+  margin-bottom: 20px; /* Good spacing between paragraphs */
+  width: 100%;
+  text-align: left; /* Align with title/subtitle */
+  white-space: pre-wrap; /* Respects new lines from user input */
+}
+
+/* Style for "Load More" Button (New) */
+.load-more-button {
+  background: #0077ff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+.load-more-button:hover {
+  background: #005ecb; /* Darker blue */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 119, 255, 0.2);
+}
+
+/* --- END OF NEW/UPDATED STYLES --- */
+
 /* Loading/Error */
-.loading, .error, .not-found {
+.loading,
+.error,
+.not-found {
   text-align: center;
   margin-top: 80px;
 }
@@ -175,7 +224,7 @@ hr {
   background: #fff;
   border: 1px solid #ddd;
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   min-width: 180px;
   z-index: 10;
   opacity: 0;
@@ -238,7 +287,8 @@ hr {
 
 /* Share shake */
 @keyframes shake {
-  0%, 100% { transform: rotate(0deg); }
+  0%,
+  100% { transform: rotate(0deg); }
   25% { transform: rotate(8deg); }
   50% { transform: rotate(-8deg); }
   75% { transform: rotate(8deg); }
@@ -279,59 +329,69 @@ hr {
   width: 100%;
 }
 
-.comment-card {
-  background: #f9f9f9;
-  padding: 8px 12px;
-  border-radius: 8px;
-  margin-bottom: 8px;
+.comments-section h3 {
+  font-size: 18px;
+  margin-bottom: 12px;
+  text-align: left;
 }
 
-.comment-date {
-  font-size: 12px;
-  color: #666;
+.comments-list {
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 5px;
 }
 
 .comments-section textarea {
   width: 100%;
-  padding: 8px;
+  padding: 10px;
   border-radius: 8px;
-  border: 1px solid #0077ff;
+  border: 1px solid #ccc;
   margin-top: 10px;
+  font-size: 14px;
+  resize: vertical;
+  min-height: 60px;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.comments-section button {
-  margin-top: 6px;
-  padding: 2px 6px;
+.comments-section textarea:focus {
+  outline: none;
+  border-color: #0077ff;
+  box-shadow: 0 0 0 2px rgba(0, 119, 255, 0.2);
+}
+
+.comments-section .send-button {
+  margin-top: 8px;
+  padding: 8px 16px;
   background: #0077ff;
   color: white;
   border: none;
   border-radius: 6px;
   cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background 0.2s;
 }
 
-.comments-section button:hover {
-  background: #acaeaf;
-  opacity: 0.2;
+.comments-section .send-button:hover {
+  background: #005ecb;
+  opacity: 1; /* Override old hover */
 }
 
 /* Responsive */
 @media (max-width: 640px) {
-  .detail-container { padding: 12px; margin: 60px auto; }
+  .detail-container {
+    padding: 12px;
+    margin: 60px auto;
+  }
   .detail-title { font-size: 22px; }
   .detail-subtitle { font-size: 14px; }
   .icon { width: 18px; height: 18px; }
+  .detail-block { font-size: 15px; }
 }
 
 /* ============================= */
-/* Comment Menu (⋯) - สำหรับ Edit/Delete */
+/* Comment Card & Menu (⋯)      */
 /* ============================= */
-.comment-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 4px;
-}
-
 .comment-card {
   position: relative;
   background: #f9f9f9;
@@ -340,7 +400,13 @@ hr {
   margin-bottom: 10px;
 }
 
-/* ส่วนบนของคอมเมนต์ (ชื่อ + เมนู ⋯) */
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
 .comment-card strong {
   font-size: 14px;
   color: #222;
@@ -352,6 +418,13 @@ hr {
   margin-top: 2px;
 }
 
+.comment-card p {
+  font-size: 14px;
+  color: #444;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
 .comment-menu-wrapper {
   position: absolute;
   top: 8px;
@@ -359,7 +432,7 @@ hr {
 }
 
 .more-button {
-  background: #0077ff;
+  background: none;
   border: none;
   cursor: pointer;
   padding: 4px;
@@ -368,14 +441,14 @@ hr {
 }
 
 .more-button:hover {
-  background: rgba(185, 183, 183, 0.08);
+  background: #e0e0e0;
 }
 
 /* ไอคอนสามจุด */
 .more-button .icon {
   width: 18px;
   height: 18px;
-  stroke: white;
+  stroke: #555; /* Changed from white */
 }
 
 /* เมนู dropdown */
@@ -416,8 +489,43 @@ hr {
   background: #fee;
 }
 
+/* Comment Edit Mode */
+.edit-comment textarea {
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  margin-top: 5px;
+  font-size: 14px;
+}
+
+.edit-comment button {
+  margin-top: 6px;
+  padding: 4px 10px;
+  background: #0077ff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-right: 5px;
+}
+
+.edit-comment button:last-of-type {
+  background: #888;
+}
+
+.edit-comment button:last-of-type:hover {
+  background: #666;
+}
+
 /* Animation */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-5px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

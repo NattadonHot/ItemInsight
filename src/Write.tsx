@@ -1,12 +1,12 @@
 import { useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
-
+import { Trash2 } from "lucide-react";
 import axios from "axios";
 import "./Styles/Write.css";
 
 interface ProductLink {
   url: string;
-  name?: string; 
+  name?: string;
 }
 
 interface Block {
@@ -46,13 +46,12 @@ export default function Write() {
   //   }
   // }, []);
 
-
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files ? Array.from(e.target.files) : [];
     setImages(files);
 
     // เคลียร์ preview เก่าๆ ออกก่อน
-    previewUrls.forEach(url => URL.revokeObjectURL(url));
+    previewUrls.forEach((url) => URL.revokeObjectURL(url));
     setPreviewUrls(files.map((file) => URL.createObjectURL(file)));
   };
 
@@ -69,15 +68,23 @@ export default function Write() {
     ]);
   };
 
+  const removeParagraph = (id: string) => {
+    setBlocks(blocks.filter((block) => block.id !== id));
+  };
+
   const handleLinkChange = (index: number, value: string) => {
     const updated = [...productLinks];
     updated[index].url = value;
-    updated[index].name = value || "Unnamed product"; 
+    updated[index].name = value || "Unnamed product";
     setProductLinks(updated);
   };
 
   const addLink = () => {
     setProductLinks([...productLinks, { url: "", name: "Unnamed product" }]);
+  };
+
+  const removeLink = (index: number) => {
+    setProductLinks(productLinks.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -91,7 +98,9 @@ export default function Write() {
     const token = localStorage.getItem("token");
 
     if (!token) {
-      setMessage("❌ You must be logged in to create a post. (Token not found)");
+      setMessage(
+        "❌ You must be logged in to create a post. (Token not found)"
+      );
       setLoading(false);
       return;
     }
@@ -108,14 +117,18 @@ export default function Write() {
       // 2. ลบบรรทัดที่ส่ง userId ออก! เพราะ Backend จะหาเองจาก Token
       // formData.append("userId", currentUser._id); // <-- ลบบรรทัดนี้
 
-      const response = await axios.post(`${import.meta.env.VITE_URL_API}/api/posts`, formData, {
-        headers: { 
-          "Content-Type": "multipart/form-data",
-          // 3. เพิ่ม Authorization Header เพื่อส่ง Token ไปให้ Backend ตรวจสอบ
-          "Authorization": `Bearer ${token}` 
-        },
-      });
-      
+      const response = await axios.post(
+        `${import.meta.env.VITE_URL_API}/api/posts`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            // 3. เพิ่ม Authorization Header เพื่อส่ง Token ไปให้ Backend ตรวจสอบ
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
       // --- ⭐ END: ส่วนที่แก้ไข ---
 
       setMessage("✅ Post created successfully!");
@@ -129,7 +142,9 @@ export default function Write() {
       setImages([]);
       setPreviewUrls([]);
     } catch (error: any) {
-      setMessage("❌ Error: " + (error.response?.data?.message || error.message));
+      setMessage(
+        "❌ Error: " + (error.response?.data?.message || error.message)
+      );
     } finally {
       setLoading(false);
     }
@@ -169,32 +184,56 @@ export default function Write() {
         <div className="block-section">
           <h4>Content</h4>
           {blocks.map((block, index) => (
-            <textarea
-              key={block.id}
-              placeholder="Write something..."
-              value={block.data.text}
-              onChange={(e) => handleBlockChange(index, e.target.value)}
-            />
+            <div className="paragraph-item" key={block.id}>
+              <textarea
+                placeholder="Write something..."
+                value={block.data.text}
+                onChange={(e) => handleBlockChange(index, e.target.value)}
+              />
+              <button
+                type="button"
+                className="btn-remove"
+                onClick={() => removeParagraph(block.id)}
+                title="Delete paragraph"
+              >
+                <Trash2 size={18} />
+              </button>
+            </div>
           ))}
-          <button type="button" onClick={addParagraph} className="btn-secondary">
+          <button
+            type="button"
+            onClick={addParagraph}
+            className="btn-secondary"
+          >
             + Add Paragraph
           </button>
         </div>
+
         <div className="product-links">
           <h4>Product Links</h4>
           {productLinks.map((link, index) => (
-            <input
-              key={index}
-              type="text"
-              placeholder="Product URL"
-              value={link.url}
-              onChange={(e) => handleLinkChange(index, e.target.value)}
-            />
+            <div className="link-item" key={index}>
+              <input
+                type="text"
+                placeholder="Product URL"
+                value={link.url}
+                onChange={(e) => handleLinkChange(index, e.target.value)}
+              />
+              <button
+                type="button"
+                className="btn-remove"
+                onClick={() => removeLink(index)}
+                title="Delete link"
+              >
+                <Trash2 size={18} />
+              </button>
+            </div>
           ))}
           <button type="button" onClick={addLink} className="btn-secondary">
             + Add Link
           </button>
         </div>
+
         <div className="image-upload">
           <h4>Upload Images</h4>
           <input

@@ -1,102 +1,171 @@
+/* ====== MAIN CONTAINER ====== */
 .create-post-container {
-  max-width: 700px;
-  margin: 2rem auto;
-  padding: 2rem;
-  background: #fff;
+  max-width: 720px;
+  margin: 2.5rem auto;
+  padding: 2rem 2.5rem;
+  background: #ffffff;
   border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
   font-family: "Inter", sans-serif;
 }
 
 .create-post-container h2 {
   text-align: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.75rem;
   color: #222;
+  font-weight: 600;
 }
 
+/* ====== FORM LAYOUT ====== */
 .create-post-form {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.25rem;
 }
 
+/* ====== INPUTS / TEXTAREAS / SELECTS ====== */
 .create-post-form input,
 .create-post-form textarea,
 .create-post-form select {
   width: 100%;
-  padding: 0.75rem 1rem;
+  padding: 0.9rem 1rem;
   font-size: 0.95rem;
   border: 1px solid #ddd;
-  border-radius: 8px;
+  border-radius: 10px;
   outline: none;
-  transition: 0.2s;
+  background: #fafafa;
+  transition: all 0.25s ease;
+  line-height: 1.5;
 }
 
 .create-post-form input:focus,
 .create-post-form textarea:focus,
 .create-post-form select:focus {
-  border-color: #555;
+  border-color: #2563EB;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 .create-post-form textarea {
-  min-height: 100px;
+  min-height: 130px;
   resize: vertical;
 }
 
+/* ====== SECTION TITLES ====== */
 .block-section h4,
 .product-links h4,
 .image-upload h4 {
-  margin-bottom: 0.25rem;
-  color: #444;
+  margin-bottom: 0.5rem;
+  color: #333;
   font-size: 1rem;
+  font-weight: 600;
+  border-left: 4px solid #2563EB;
+  padding-left: 0.5rem;
 }
 
+/* ====== SECONDARY BUTTONS (Add Paragraph / Add Link) ====== */
 .btn-secondary {
-  background: #f2f2f2;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
+  background: #eef2ff;
+  border: 1px solid #dbeafe;
+  color: #2563EB;
+  padding: 0.55rem 1rem;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 0.85rem;
-  transition: background 0.2s;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.25s ease;
+  align-self: flex-start;
 }
 
 .btn-secondary:hover {
-  background: #e6e6e6;
+  background: #dbeafe;
+  border-color: #93c5fd;
+  color: #1e40af;
+  transform: translateY(-1px);
 }
 
+/* ====== SUBMIT BUTTON ====== */
 .create-post-form button[type="submit"] {
-  background: #222;
-  color: white;
-  padding: 0.75rem 1.5rem;
+  background: #2563EB;
+  color: #fff;
+  padding: 0.8rem 1.6rem;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
   font-size: 1rem;
-  transition: background 0.2s;
+  font-weight: 500;
+  transition: all 0.25s ease;
 }
 
 .create-post-form button[type="submit"]:hover {
-  background: #444;
+  background: #1e40af;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(37, 99, 235, 0.2);
 }
 
+/* ====== IMAGE PREVIEW ====== */
 .image-preview {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.6rem;
 }
 
 .image-preview img {
   width: 100px;
   height: 100px;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: 10px;
   border: 1px solid #ddd;
 }
 
+/* ====== STATUS MESSAGE ====== */
 .status-message {
   text-align: center;
   margin-top: 1rem;
   font-size: 0.95rem;
   color: #333;
+}
+
+/* ====== PARAGRAPH & LINK ITEM ====== */
+.paragraph-item,
+.link-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.paragraph-item textarea,
+.link-item input {
+  flex: 1;
+}
+
+/* ====== DELETE BUTTON (Trash Icon) ====== */
+.btn-remove {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  color: #6b7280;
+  border-radius: 10px;
+  padding: 0.45rem 0.55rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 42px;
+  transition: all 0.25s ease;
+}
+
+.btn-remove:hover {
+  background: #fef2f2;
+  border-color: #fca5a5;
+  color: #dc2626;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(220, 38, 38, 0.15);
+}
+
+.btn-remove svg {
+  pointer-events: none;
+  width: 18px;
+  height: 18px;
 }
