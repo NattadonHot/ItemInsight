@@ -17,7 +17,7 @@ const Profile: React.FC = () => {
   const [error, setError] = useState<string>("");
   const [uploadSuccess, setUploadSuccess] = useState<boolean>(false);
   const [bio, setBio] = useState<string>("");
-  
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,12 +26,12 @@ const Profile: React.FC = () => {
     // ดึง userId จาก localStorage
     const storedUserId = localStorage.getItem("userId");
     const storedUsername = localStorage.getItem("username");
-    
+
     if (!storedUserId) {
       setError("❌ User not logged in");
       return;
     }
-    
+
     setUserId(storedUserId);
     if (storedUsername) {
       setUsername(storedUsername);
@@ -42,14 +42,13 @@ const Profile: React.FC = () => {
       try {
         const res = await axios.get(`${API_URL}/api/user/${storedUserId}`);
         const userData = res.data;
-        
+
         if (userData.avatarUrl) setPreview(userData.avatarUrl);
         if (userData.username && !storedUsername) {
           setUsername(userData.username);
           localStorage.setItem("username", userData.username);
         }
         if (userData.bio) setBio(userData.bio);
-        
       } catch (err) {
         console.error(err);
         setError("❌ Cannot fetch profile");
@@ -136,9 +135,9 @@ const Profile: React.FC = () => {
 
     try {
       await axios.put(`${API_URL}/api/user/${userId}`, {
-        bio: bio
+        bio: bio,
       });
-      
+
       alert("✅ Profile updated successfully!");
     } catch (err: any) {
       console.error(err);
@@ -151,11 +150,24 @@ const Profile: React.FC = () => {
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: 100 }}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        marginTop: 100,
+      }}
+    >
       <img
         src={preview}
         alt="Profile"
-        style={{ width: 170, height: 170, borderRadius: "50%", objectFit: "cover", border: "2px solid #3B82F6" }}
+        style={{
+          width: 170,
+          height: 170,
+          borderRadius: "50%",
+          objectFit: "cover",
+          border: "2px solid #3B82F6",
+        }}
       />
 
       <div style={{ display: "flex", gap: 10, marginTop: 20 }}>
@@ -203,18 +215,40 @@ const Profile: React.FC = () => {
       </div>
 
       {uploadSuccess && (
-        <p style={{ color: "green", marginTop: 10, fontFamily: "Poppins", fontWeight: 500 }}>
+        <p
+          style={{
+            color: "green",
+            marginTop: 10,
+            fontFamily: "Poppins",
+            fontWeight: 500,
+          }}
+        >
           ✅ Avatar updated successfully!
         </p>
       )}
 
-      {error && <p style={{ color: "red", marginTop: 10, fontFamily: "Poppins" }}>{error}</p>}
+      {error && (
+        <p style={{ color: "red", marginTop: 10, fontFamily: "Poppins" }}>
+          {error}
+        </p>
+      )}
 
       <form className="profile-form">
         <div className="name-input" style={{ marginTop: "30px" }}>
-          <label htmlFor="name" style={{ fontSize: 22, fontFamily: 'Poppins', fontWeight: '600', wordWrap: 'break-word' }}>Username</label><br />
-          <input 
-            type="text" 
+          <label
+            htmlFor="name"
+            style={{
+              fontSize: 22,
+              fontFamily: "Poppins",
+              fontWeight: "600",
+              wordWrap: "break-word",
+            }}
+          >
+            Username
+          </label>
+          <br />
+          <input
+            type="text"
             id="name"
             value={username}
             readOnly
@@ -226,17 +260,28 @@ const Profile: React.FC = () => {
               backgroundColor: "#F3F4F6",
               paddingLeft: "10px",
               color: "#6B7280",
-              cursor: "not-allowed"
+              cursor: "not-allowed",
             }}
             placeholder="Loading..."
           />
         </div>
 
         <div className="passwd-input" style={{ marginTop: "30px" }}>
-          <label htmlFor="passwd" style={{ fontSize: 22, fontFamily: 'Poppins', fontWeight: '600', wordWrap: 'break-word' }}>Password</label><br />
+          <label
+            htmlFor="passwd"
+            style={{
+              fontSize: 22,
+              fontFamily: "Poppins",
+              fontWeight: "600",
+              wordWrap: "break-word",
+            }}
+          >
+            Password
+          </label>
+          <br />
           <div style={{ position: "relative" }}>
-            <input 
-              type="password" 
+            <input
+              type="password"
               id="passwd"
               disabled
               style={{
@@ -245,7 +290,7 @@ const Profile: React.FC = () => {
                 border: "2px solid #3B82F6",
                 backgroundColor: "#F9FAFB",
                 paddingLeft: "10px",
-                opacity: 0.7
+                opacity: 0.7,
               }}
               placeholder="********"
             />
@@ -263,7 +308,7 @@ const Profile: React.FC = () => {
                 cursor: "pointer",
                 fontSize: "14px",
                 fontWeight: "600",
-                fontFamily: "Poppins"
+                fontFamily: "Poppins",
               }}
             >
               Change Password
@@ -272,8 +317,19 @@ const Profile: React.FC = () => {
         </div>
 
         <div className="bio-input" style={{ marginTop: "30px" }}>
-          <label htmlFor="bio" style={{ fontSize: 22, fontFamily: 'Poppins', fontWeight: '600', wordWrap: 'break-word' }}>Short bio</label><br />
-          <textarea 
+          <label
+            htmlFor="bio"
+            style={{
+              fontSize: 22,
+              fontFamily: "Poppins",
+              fontWeight: "600",
+              wordWrap: "break-word",
+            }}
+          >
+            Short bio
+          </label>
+          <br />
+          <textarea
             id="bio"
             value={bio}
             onChange={(e) => setBio(e.target.value)}
@@ -284,15 +340,15 @@ const Profile: React.FC = () => {
               backgroundColor: "#F9FAFB",
               paddingLeft: "10px",
               paddingTop: "10px",
-              resize: "vertical"
+              resize: "vertical",
             }}
             placeholder="Tell us about yourself..."
           />
         </div>
       </form>
-      
-      <button 
-        type="button" 
+
+      <button
+        type="button"
         className="btn-done"
         onClick={handleSaveProfile}
         style={{
@@ -303,11 +359,11 @@ const Profile: React.FC = () => {
           border: "2px solid #F9FAFB",
           backgroundColor: "#3B82F6",
           fontSize: 16,
-          fontFamily: 'Poppins',
-          fontWeight: '600',
-          wordWrap: 'break-word',
+          fontFamily: "Poppins",
+          fontWeight: "600",
+          wordWrap: "break-word",
           color: "#F9FAFB",
-          cursor: "pointer"
+          cursor: "pointer",
         }}
       >
         Done
