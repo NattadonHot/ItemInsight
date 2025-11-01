@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState , useEffect } from "react";
 import type { ChangeEvent, FormEvent } from "react";
 import { Trash2 } from "lucide-react";
 import axios from "axios";
@@ -37,14 +37,9 @@ export default function Write() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
-  // ไม่จำเป็นต้องใช้ State ของ currentUser ในฟอร์มนี้แล้ว
-  // const [currentUser, setCurrentUser] = useState<User | null>(null);
-  // useEffect(() => {
-  //   const storedUser = localStorage.getItem("currentUser");
-  //   if (storedUser) {
-  //     setCurrentUser(JSON.parse(storedUser));
-  //   }
-  // }, []);
+  useEffect(() => {
+      document.title = "Create New Post - ItemInsight";
+    }, []);
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files ? Array.from(e.target.files) : [];

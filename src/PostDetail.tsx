@@ -65,7 +65,6 @@ export default function PostDetail() {
   const [likeAnim, setLikeAnim] = useState(false);
 
   const [comments, setComments] = useState<Comment[]>([]);
-  const [showComments, setShowComments] = useState(false);
   const [newComment, setNewComment] = useState("");
 
   const [bookmarked, setBookmarked] = useState(false);
@@ -76,14 +75,14 @@ export default function PostDetail() {
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const moreRef = useRef<HTMLDivElement>(null);
 
-  // --- State for Load More Blocks (START) ---
-  const INITIAL_VISIBLE_BLOCKS = 3; // 👈 จำนวน paragraph ที่จะแสดงผลตอนแรก
-  const LOAD_MORE_INCREMENT = 5; // 👈 จำนวนที่จะแสดงเพิ่มเมื่อกด "Load More"
+  // --- State for Load More Blocks ---
+  const INITIAL_VISIBLE_BLOCKS = 3;
+  const LOAD_MORE_INCREMENT = 5;
   const [visibleBlocksCount, setVisibleBlocksCount] = useState(
     INITIAL_VISIBLE_BLOCKS
   );
-  // --- State for Load More Blocks (END) ---
 
+  const commentsSectionRef = useRef<HTMLDivElement>(null);
   const commentsEndRef = useRef<HTMLDivElement>(null);
   const scrollToBottom = () =>
     commentsEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -102,9 +101,16 @@ export default function PostDetail() {
           setLiked(postData.likedUsers?.includes(userId) || false);
           setBookmarked(postData.bookmarkedUsers?.includes(userId) || false);
           setLikesCount(postData.likesCount || 0);
-        } else setError(result.message || "Failed to fetch post");
+
+          // ✅ ตั้ง title ของหน้าเป็น "ชื่อโพสต์ - ItemInsight"
+          document.title = `${postData.title} - ItemInsight`;
+        } else {
+          setError(result.message || "Failed to fetch post");
+          document.title = `Post not found | ItemInsight`;
+        }
       } catch (err: unknown) {
         setError(err instanceof Error ? err.message : String(err));
+        document.title = `Post not found | ItemInsight`;
       } finally {
         setLoading(false);
       }
@@ -162,7 +168,7 @@ export default function PostDetail() {
     }
   };
 
-  /* ------------------- 💬 ADD COMMENT ------------------- */
+  // ------------------- ADD COMMENT -------------------
   const handleAddComment = async () => {
     if (!newComment.trim()) return;
 
@@ -288,16 +294,17 @@ export default function PostDetail() {
       <div className="action-icons-wrapper">
         <div className="action-icons-left">
           <button
-            className={`icon-button like-button ${liked ? "liked" : ""} ${
-              likeAnim ? "icon-animate-heart" : ""
-            }`}
+            className={`icon-button like-button ${liked ? "liked" : ""} ${likeAnim ? "icon-animate-heart" : ""
+              }`}
             onClick={handleLike}
           >
             <Heart className="icon" /> <span>{likesCount} likes</span>
           </button>
           <button
             className="icon-button comment-button"
-            onClick={() => setShowComments(!showComments)}
+            onClick={() =>
+              commentsSectionRef.current?.scrollIntoView({ behavior: "smooth" })
+            }
           >
             <MessageCircle className="icon" /> <span>{comments.length}</span>
           </button>
@@ -360,9 +367,8 @@ export default function PostDetail() {
           </div>
 
           <button
-            className={`icon-button bookmark-button ${
-              bookmarked ? "bookmarked" : ""
-            } ${bookmarkAnim ? "icon-animate-bookmark" : ""}`}
+            className={`icon-button bookmark-button ${bookmarked ? "bookmarked" : ""
+              } ${bookmarkAnim ? "icon-animate-bookmark" : ""}`}
             onClick={handleBookmark}
           >
             <Bookmark className="icon" />
@@ -434,23 +440,27 @@ export default function PostDetail() {
       )}
 
       {/* ------------------- Comments Section ------------------- */}
-      {showComments && (
-        <div className="comments-section">
-          <h3>Comments</h3>
-          <div className="comments-list">
-            {comments.map((comment) => (
-              <CommentCard
-                key={comment._id}
-                comment={comment}
-                postId={post._id}
-                token={token}
-                setComments={setComments}
-                API_URL={API_URL}
-              />
-            ))}
-            <div ref={commentsEndRef} />
-          </div>
+      <hr className="comments-divider" />
+      <div className="comments-section" ref={commentsSectionRef}>
+        <h3>Comments</h3>
+        <div className="comments-list">
+          {comments
+          .slice()
+          .reverse()
+          .map((comment) => (
+            <CommentCard
+              key={comment._id}
+              comment={comment}
+              postId={post._id}
+              token={token}
+              setComments={setComments}
+              API_URL={API_URL}
+            />
+          ))}
+          <div ref={commentsEndRef} />
+        </div>
 
+        <div className="comment-input-wrapper">
           <textarea
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
@@ -461,7 +471,7 @@ export default function PostDetail() {
             Send
           </button>
         </div>
-      )}
+      </div>
     </div>
   );
 }
@@ -575,8 +585,8 @@ function CommentCard({
           </button>
           {showMenu && (
             <div className="comment-menu show">
-              {!editing && <button onClick={() => setEditing(true)}>✏️</button>}
-              <button onClick={handleDelete}>🗑️</button>
+              {!editing && <button onClick={() => setEditing(true)}>Edit</button>}
+              <button onClick={handleDelete}>Delete</button>
             </div>
           )}
         </div>

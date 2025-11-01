@@ -27,6 +27,10 @@ export default function Bookmark() {
   const userId = localStorage.getItem("userId"); // สมมติว่ามีเก็บไว้
 
   useEffect(() => {
+      document.title = "Bookmarks - ItemInsight";
+    }, []);
+
+  useEffect(() => {
     const fetchBookmarks = async () => {
       if (!userId) return setError("User not logged in");
       try {

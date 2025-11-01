@@ -25,6 +25,7 @@ export default function Login({ onLogin }: LoginProps) {
         localStorage.setItem("userId", user.id); //เก็บ userId
         localStorage.setItem("userEmail", user.email);
         localStorage.setItem("avatarUrl", user.avatarUrl);
+        localStorage.setItem("username", user.username);
         setTimeout(() => onLogin(), 500);
       }
     } catch (err: any) {
