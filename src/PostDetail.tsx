@@ -20,8 +20,10 @@ interface ProductLink {
   url: string;
 }
 interface UserInfo {
+  _id?: string;
   username?: string;
   avatarUrl?: string;
+  email?: string;
 }
 interface Comment {
   _id: string;
@@ -54,7 +56,7 @@ export default function PostDetail() {
   const [error, setError] = useState<string | null>(null);
 
   const API_URL = import.meta.env.VITE_URL_API;
-  const currentUsername = localStorage.getItem("username") || "";
+  const currentUsername = localStorage.getItem("userId") || "";
   const userId = localStorage.getItem("userId") || "";
   const token = localStorage.getItem("token");
 
@@ -257,7 +259,7 @@ export default function PostDetail() {
   if (error) return <p className="error">❌ {error}</p>;
   if (!post) return <p className="not-found">Post not found.</p>;
 
-  const isOwner = post.userId?.username === currentUsername;
+  const isOwner = post.userId?._id === currentUsername;
 
   return (
     <div className="detail-container">
