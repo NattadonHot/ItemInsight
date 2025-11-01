@@ -1,92 +1,160 @@
-/* home.css */
-
-/* Container หลักของหน้า Home */
+/* ====== HOME CONTAINER ====== */
 .home-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
+  padding: 24px;
   max-width: 800px;
   margin: 0 auto;
   margin-top: 70px;
+  font-family: "Inter", "Prompt", sans-serif;
 }
 
-/* Tabs */
-.tabs-container {
+/* ====== FILTER BAR ====== */
+.filter-bar {
   display: flex;
-  justify-content: center;
-  gap: 40px;
-  margin-top: 20px;
-  margin-bottom: 20px;
+  justify-content: space-between;
+  gap: 20px;
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 16px 20px;
+  border-radius: 14px;
   width: 100%;
+  margin-bottom: 30px;
 }
 
-.tab-item {
-  padding: 10px 0;
-  cursor: pointer;
+.filter-block {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.filter-label {
+  font-weight: 600;
+  color: #333;
+  font-size: 15px;
+}
+
+/* ====== CUSTOM DROPDOWN ====== */
+.custom-dropdown {
   position: relative;
-  font-weight: normal;
-  color: gray;
+  display: inline-block;
+  width: 180px;
 }
 
-.tab-item.active {
-  font-weight: bold;
-  color: black;
+.custom-dropdown select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 100%;
+  padding: 10px 40px 10px 14px;
+  font-size: 15px;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  background-color: #f9fafb;
+  color: #333;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.tab-item.active::after {
-  content: '';
-  height: 2px;
-  background-color: black;
+/* Hover & Focus Animation */
+.custom-dropdown select:hover {
+  border-color: #bbb;
+  background-color: #f0f0f0;
+}
+
+.custom-dropdown select:focus {
+  outline: none;
+  border-color: #999;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
+  background-color: #fff;
+}
+
+/* Dropdown arrow */
+.dropdown-icon {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%) rotate(0deg);
+  transition: transform 0.3s ease, color 0.3s ease;
+  font-size: 14px;
+  color: #666;
+  pointer-events: none;
 }
 
-/* Content section */
+/* Rotate arrow on focus */
+.custom-dropdown select:focus + .dropdown-icon {
+  transform: translateY(-50%) rotate(180deg);
+  color: #333;
+}
+
+/* Optional: smooth option transition (limited support) */
+.custom-dropdown select option {
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* ====== CONTENT SECTION ====== */
 .content-section {
-  margin-top: 30px;
   width: 100%;
 }
 
 .post-list {
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: 18px;
 }
 
-/* Load More Button */
-.load-more-btn {
-  padding: 10px 25px;
-  font-size: 15px;
-  font-weight: bold;
-  color: #6d6c6cff;
-  background-color: #f0f2f5;
-  border: 1px solid #ccd0d5;
-  border-radius: 17px;
-  cursor: pointer;
-  transition: background-color 0.2s, color 0.2s;
-}
-
-.load-more-btn:hover {
-  color: white;
-  background-color: #ccd0d5;
-}
-
-/* Error / No posts message */
+/* ====== MESSAGE BOX ====== */
 .message-box {
-  padding: 20px;
-  border-radius: 5px;
+  padding: 16px;
+  border-radius: 10px;
+  text-align: center;
+  color: #444;
+  background-color: #f9f9f9;
+  width: 100%;
+  transition: all 0.3s ease;
 }
 
 .message-box.error {
-  background-color: #fee;
-  border: 1px solid #fcc;
+  background-color: #ffecec;
   color: #c00;
+  border: 1px solid #f5c2c2;
 }
 
 .message-box.no-posts {
   color: #666;
-  text-align: center;
+}
+
+/* ====== LOAD MORE BUTTON ====== */
+.load-more-btn {
+  padding: 10px 25px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #444;
+  background-color: #f5f6f7;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.load-more-btn:hover {
+  background-color: #e0e0e0;
+  color: #111;
+  transform: translateY(-2px);
+}
+
+/* ====== OPTIONAL: Smooth fade-in for posts ====== */
+.post-list > * {
+  opacity: 0;
+  transform: translateY(5px);
+  animation: fadeInUp 0.4s forwards;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

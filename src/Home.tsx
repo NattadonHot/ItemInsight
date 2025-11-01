@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Header from "./Components/Header";
 import Sidebar from "./Components/Sidebar";
 import PostCard from "./Components/PostCard";
-import "./Styles/Home.css"; // ✅ import CSS
+import "./Styles/Home.css";
 
 interface Post {
   _id: string;
@@ -23,69 +23,65 @@ interface Post {
 
 export default function Home() {
   const [open, setOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState("For you");
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [sortOrder, setSortOrder] = useState("Newest");
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isHovered, setIsHovered] = useState(false);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const tabs = ["For you", "Fashion", "Skincare"];
   const API_URL = import.meta.env.VITE_URL_API;
   const userId = localStorage.getItem("userId") || "";
+
+  const categories = [
+    "Fashion",
+    "Skincare",
+    "Tech",
+    "Food",
+    "Lifestyle",
+    "Travel",
+  ];
 
   useEffect(() => {
     document.title = "Home - ItemInsight";
   }, []);
 
-  // รีเซ็ตข้อมูลเมื่อเปลี่ยนแท็บ
   useEffect(() => {
     setPage(1);
     setPosts([]);
     setHasMore(true);
     setLoading(true);
     setError(null);
-  }, [activeTab]);
+  }, [selectedCategory, sortOrder]);
 
-  // Fetch posts
   useEffect(() => {
-    if (page === 0 || !hasMore) {
-      if (page > 0) setLoading(false);
-      return;
-    }
-
     const fetchPosts = async () => {
-      setLoading(true);
-      setError(null);
-
       try {
-        let category = "";
-        if (activeTab === "Fashion") category = "fashion";
-        else if (activeTab === "Skincare") category = "beauty";
-
         const params = new URLSearchParams({
           page: page.toString(),
           limit: "10",
+          sort: sortOrder === "Newest" ? "desc" : "asc",
         });
-        if (category) params.append("category", category);
 
-        const response = await fetch(
-          `${API_URL}/api/posts?${params.toString()}`
-        );
+        if (selectedCategory !== "All") {
+          params.append("category", selectedCategory.toLowerCase());
+        }
+
+        const response = await fetch(`${API_URL}/api/posts?${params}`);
         if (!response.ok)
           throw new Error(`HTTP error! status: ${response.status}`);
 
         const result = await response.json();
+
         if (result.success) {
           if (page === 1) {
             setPosts(result.data);
           } else {
-            setPosts((prevPosts) => [...prevPosts, ...result.data]);
+            setPosts((prev) => [...prev, ...result.data]);
           }
           if (result.data.length < 10) setHasMore(false);
-          else setHasMore(true);
         } else {
           throw new Error(result.message || "Failed to load posts");
         }
@@ -98,9 +94,8 @@ export default function Home() {
     };
 
     fetchPosts();
-  }, [page, activeTab, API_URL]);
+  }, [page, selectedCategory, sortOrder, API_URL]);
 
-  // Toggle like
   const toggleLike = async (postId: string) => {
     if (!userId) return alert("Please login first");
     try {
@@ -128,7 +123,6 @@ export default function Home() {
     }
   };
 
-  // Toggle bookmark
   const toggleBookmark = async (postId: string) => {
     if (!userId) return alert("Please login first");
     try {
@@ -155,12 +149,10 @@ export default function Home() {
     }
   };
 
-  // Load more
   const handleLoadMore = () => {
     if (!loading && hasMore) setPage((prevPage) => prevPage + 1);
   };
 
-  // Transform post for PostCard
   const transformPostForCard = (post: Post) => ({
     id: post._id,
     slug: post.slug,
@@ -174,7 +166,6 @@ export default function Home() {
     isBookmarked: post.bookmarkedUsers?.includes(userId) || false,
   });
 
-  // Filter posts by search query
   const filteredPosts = posts.filter((post) => {
     const query = searchQuery.toLowerCase();
     return (
@@ -185,53 +176,63 @@ export default function Home() {
     );
   });
 
-  // Handle logout
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("userEmail");
-    localStorage.removeItem("userId");
-    localStorage.removeItem("avatarUrl");
-    window.location.href = "/login"; // Redirect
+    localStorage.clear();
+    window.location.href = "/login";
   };
 
   return (
     <>
-      <Header
-        open={open}
-        setOpen={setOpen}
-        onSearch={(q) => setSearchQuery(q)}
-      />
+      <Header open={open} setOpen={setOpen} onSearch={setSearchQuery} />
       <Sidebar open={open} setOpen={setOpen} onLogout={handleLogout} />
 
       <div className="home-container">
-        {/* Tabs */}
-        <div className="tabs-container">
-          {tabs.map((tab) => (
-            <div
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`tab-item ${activeTab === tab ? "active" : ""}`}
-            >
-              {tab}
+        {/* 🔹 Dropdown Category Filter */}
+        <div className="filter-bar">
+          <div className="filter-block">
+            <label className="filter-label">Category:</label>
+            <div className="custom-dropdown">
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+              >
+                <option value="All">All</option>
+                {categories.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
+                ))}
+              </select>
+              <span className="dropdown-icon">▾</span>
             </div>
-          ))}
+          </div>
+
+          <div className="filter-block">
+            <label className="filter-label">Sort by:</label>
+            <div className="custom-dropdown">
+              <select
+                value={sortOrder}
+                onChange={(e) => setSortOrder(e.target.value)}
+              >
+                <option value="Newest">Newest</option>
+                <option value="Oldest">Oldest</option>
+              </select>
+              <span className="dropdown-icon">▾</span>
+            </div>
+          </div>
         </div>
 
-        {/* Content */}
+        {/* 🔹 Posts Section */}
         <div className="content-section">
           {loading && page === 1 && (
             <p style={{ textAlign: "center" }}>Loading posts...</p>
           )}
 
-          {error && (
-            <div className="message-box error">
-              <strong>Error:</strong> {error}
-            </div>
-          )}
+          {error && <div className="message-box error">{error}</div>}
 
-          {!loading && !error && filteredPosts.length === 0 && page === 1 && (
+          {!loading && !error && filteredPosts.length === 0 && (
             <div className="message-box no-posts">
-              No posts found for this category or search.
+              No posts found for this category.
             </div>
           )}
 
@@ -248,17 +249,11 @@ export default function Home() {
             </div>
           )}
 
-          {/* Load More */}
           <div style={{ padding: "20px", textAlign: "center" }}>
             {loading && page > 1 && <p>Loading more posts...</p>}
 
             {!loading && hasMore && filteredPosts.length > 0 && (
-              <button
-                className="load-more-btn"
-                onClick={handleLoadMore}
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
-              >
+              <button className="load-more-btn" onClick={handleLoadMore}>
                 Load More
               </button>
             )}
