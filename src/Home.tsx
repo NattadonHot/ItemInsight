@@ -164,6 +164,7 @@ export default function Home() {
     likes: post.likesCount || 0,
     isLiked: post.likedUsers?.includes(userId) || false,
     isBookmarked: post.bookmarkedUsers?.includes(userId) || false,
+    createdAt: post.createdAt,  // ✅ เพิ่มตรงนี้
   });
 
   const filteredPosts = posts.filter((post) => {
