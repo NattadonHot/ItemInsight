@@ -1,0 +1,92 @@
+/* home.css */
+
+/* Container หลักของหน้า Home */
+.home-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+  margin-top: 70px;
+}
+
+/* Tabs */
+.tabs-container {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.tab-item {
+  padding: 10px 0;
+  cursor: pointer;
+  position: relative;
+  font-weight: normal;
+  color: gray;
+}
+
+.tab-item.active {
+  font-weight: bold;
+  color: black;
+}
+
+.tab-item.active::after {
+  content: '';
+  height: 2px;
+  background-color: black;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+/* Content section */
+.content-section {
+  margin-top: 30px;
+  width: 100%;
+}
+
+.post-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* Load More Button */
+.load-more-btn {
+  padding: 10px 25px;
+  font-size: 15px;
+  font-weight: bold;
+  color: #6d6c6cff;
+  background-color: #f0f2f5;
+  border: 1px solid #ccd0d5;
+  border-radius: 17px;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.load-more-btn:hover {
+  color: white;
+  background-color: #ccd0d5;
+}
+
+/* Error / No posts message */
+.message-box {
+  padding: 20px;
+  border-radius: 5px;
+}
+
+.message-box.error {
+  background-color: #fee;
+  border: 1px solid #fcc;
+  color: #c00;
+}
+
+.message-box.no-posts {
+  color: #666;
+  text-align: center;
+}

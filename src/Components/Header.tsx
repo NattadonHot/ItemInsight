@@ -7,31 +7,25 @@ import { Link } from "react-router-dom";
 interface HeaderProps {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
-  onLogout: () => void;
+  onLogout?: () => void;
+  onSearch?: (query: string) => void; // ✅ เพิ่ม
 }
 
-export default function Header({ open, setOpen }: HeaderProps) {
+export default function Header({ open, setOpen, onSearch }: HeaderProps) {
   const [avatarUrl, setAvatarUrl] = useState<string>(
     localStorage.getItem("avatarUrl") ||
       "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
   );
+  const [searchText, setSearchText] = useState("");
 
   useEffect(() => {
-    // ฟังก์ชันที่จะถูกเรียกเมื่อมีการอัปเดต avatar
     const handleAvatarUpdate = () => {
       const newAvatar = localStorage.getItem("avatarUrl");
-      if (newAvatar) {
-        setAvatarUrl(newAvatar);
-      }
+      if (newAvatar) setAvatarUrl(newAvatar);
     };
-
-    // เพิ่ม event listener
     window.addEventListener("avatarUpdated", handleAvatarUpdate);
-
-    // Cleanup
-    return () => {
+    return () =>
       window.removeEventListener("avatarUpdated", handleAvatarUpdate);
-    };
   }, []);
 
   return (
@@ -42,9 +36,20 @@ export default function Header({ open, setOpen }: HeaderProps) {
           <span className="logo-white">Item</span>
           <span className="logo-orange">Insight</span>
         </h1>
+
+        {/* ✅ search bar */}
         <div className="search-box">
           <FaSearch className="search-icon" />
-          <input type="text" placeholder="Search..." />
+          <input
+            type="text"
+            placeholder="Search posts or users..."
+            value={searchText}
+            onChange={(e) => {
+              const value = e.target.value;
+              setSearchText(value);
+              if (onSearch) onSearch(value); // 🔥 ค้นหาแบบ real-time
+            }}
+          />
         </div>
       </div>
 
@@ -54,7 +59,7 @@ export default function Header({ open, setOpen }: HeaderProps) {
           alt="Profile"
           className="user-avatar"
           style={{
-            marginRight:"50px",
+            marginRight: "50px",
             width: 40,
             height: 40,
             borderRadius: "50%",

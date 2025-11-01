@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
+import Header from "./Components/Header";
+import Sidebar from "./Components/Sidebar";
 import PostCard from "./Components/PostCard";
+import "./Styles/Home.css"; // ✅ import CSS
 
 interface Post {
   _id: string;
@@ -19,14 +22,15 @@ interface Post {
 }
 
 export default function Home() {
+  const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("For you");
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
   const [isHovered, setIsHovered] = useState(false);
-  const [page, setPage] = useState(1); // เก็บ state ของ page ปัจจุบัน
-  const [hasMore, setHasMore] = useState(true); // เก็บว่ายังมีข้อมูลให้โหลดอีกไหม
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const tabs = ["For you", "Fashion", "Skincare"];
   const API_URL = import.meta.env.VITE_URL_API;
@@ -36,26 +40,24 @@ export default function Home() {
     document.title = "Home - ItemInsight";
   }, []);
 
-  // 1. ปรับ useEffect นี้: เมื่อ Tab เปลี่ยน ให้รีเซ็ตทุกอย่าง
+  // รีเซ็ตข้อมูลเมื่อเปลี่ยนแท็บ
   useEffect(() => {
-    setPage(1); // กลับไปหน้า 1
-    setPosts([]); // ล้าง post เก่า
-    setHasMore(true); // ตั้งค่าว่าน่าจะมีข้อมูลเพิ่ม
-    setLoading(true); // เริ่มโหลดใหม่ (เพื่อให้ fetch useEffect ทำงาน)
-    setError(null); // ล้าง error เก่า
+    setPage(1);
+    setPosts([]);
+    setHasMore(true);
+    setLoading(true);
+    setError(null);
   }, [activeTab]);
 
-  // 2. สร้าง useEffect ใหม่สำหรับ Fetch ข้อมูล
-  // จะทำงานเมื่อ page หรือ activeTab เปลี่ยน (แต่จะ fetch เมื่อ page > 0)
+  // Fetch posts
   useEffect(() => {
-    // ถ้า page เป็น 0 (เช่น ตอนรีเซ็ต) หรือไม่มีข้อมูลให้โหลดแล้ว ก็ไม่ต้องทำอะไร
     if (page === 0 || !hasMore) {
-      if (page > 0) setLoading(false); // ถ้าไม่ได้ fetch แต่ page > 0 ให้หยุด loading
+      if (page > 0) setLoading(false);
       return;
     }
 
     const fetchPosts = async () => {
-      setLoading(true); // เริ่มโหลด
+      setLoading(true);
       setError(null);
 
       try {
@@ -63,7 +65,6 @@ export default function Home() {
         if (activeTab === "Fashion") category = "fashion";
         else if (activeTab === "Skincare") category = "beauty";
 
-        // 3. ใช้ state 'page' ในการสร้าง params
         const params = new URLSearchParams({
           page: page.toString(),
           limit: "10",
@@ -78,20 +79,13 @@ export default function Home() {
 
         const result = await response.json();
         if (result.success) {
-          // 4. ถ้าเป็นหน้า 1 ให้ทับข้อมูลเก่า, ถ้าหน้า 2+ ให้ต่อท้าย
           if (page === 1) {
             setPosts(result.data);
           } else {
             setPosts((prevPosts) => [...prevPosts, ...result.data]);
           }
-
-          // 5. เช็กว่ามีข้อมูลหน้าถัดไปหรือไม่
-          // (ถ้า API คืนค่าน้อยกว่า 10 แสดงว่าหมดแล้ว)
-          if (result.data.length < 10) {
-            setHasMore(false);
-          } else {
-            setHasMore(true); // เผื่อไว้ในกรณีที่ข้อมูลมาเต็ม 10 พอดี
-          }
+          if (result.data.length < 10) setHasMore(false);
+          else setHasMore(true);
         } else {
           throw new Error(result.message || "Failed to load posts");
         }
@@ -99,13 +93,14 @@ export default function Home() {
         console.error("Error fetching posts:", err);
         setError(err instanceof Error ? err.message : "An error occurred");
       } finally {
-        setLoading(false); // หยุดโหลดเมื่อเสร็จสิ้น
+        setLoading(false);
       }
     };
 
-    fetchPosts(); // เรียกใช้งาน fetch
-  }, [page, activeTab, API_URL]); // ทำงานเมื่อ page หรือ activeTab เปลี่ยน
+    fetchPosts();
+  }, [page, activeTab, API_URL]);
 
+  // Toggle like
   const toggleLike = async (postId: string) => {
     if (!userId) return alert("Please login first");
     try {
@@ -133,6 +128,7 @@ export default function Home() {
     }
   };
 
+  // Toggle bookmark
   const toggleBookmark = async (postId: string) => {
     if (!userId) return alert("Please login first");
     try {
@@ -159,14 +155,12 @@ export default function Home() {
     }
   };
 
-  // 6. สร้างฟังก์ชันสำหรับปุ่ม Load More
+  // Load more
   const handleLoadMore = () => {
-    // ถ้าไม่กำลังโหลด และยังมีข้อมูลเหลือ
-    if (!loading && hasMore) {
-      setPage((prevPage) => prevPage + 1); // เพิ่มเลขหน้า, ซึ่งจะ trigger useEffect ให้ fetch เอง
-    }
+    if (!loading && hasMore) setPage((prevPage) => prevPage + 1);
   };
 
+  // Transform post for PostCard
   const transformPostForCard = (post: Post) => ({
     id: post._id,
     slug: post.slug,
@@ -180,137 +174,101 @@ export default function Home() {
     isBookmarked: post.bookmarkedUsers?.includes(userId) || false,
   });
 
+  // Filter posts by search query
+  const filteredPosts = posts.filter((post) => {
+    const query = searchQuery.toLowerCase();
+    return (
+      post.title.toLowerCase().includes(query) ||
+      (post.category && post.category.toLowerCase().includes(query)) ||
+      (post.userId?.username &&
+        post.userId.username.toLowerCase().includes(query))
+    );
+  });
+
+  // Handle logout
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userEmail");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("avatarUrl");
+    window.location.href = "/login"; // Redirect
+  };
+
   return (
-    <div
-      className="home-container"
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        padding: "20px",
-        maxWidth: "800px",
-        margin: "0 auto",
-        marginTop: "70px",
-      }}
-    >
-      {/* Tabs */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          gap: "40px",
-          marginTop: "20px",
-          marginBottom: "20px",
-          width: "100%",
-        }}
-      >
-        {tabs.map((tab) => (
-          <div
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            style={{
-              fontWeight: activeTab === tab ? "bold" : "normal",
-              color: activeTab === tab ? "black" : "gray",
-              padding: "10px 0",
-              cursor: "pointer",
-              position: "relative",
-            }}
-          >
-            {tab}
-            {activeTab === tab && (
-              <div
-                style={{
-                  height: "2px",
-                  backgroundColor: "black",
-                  position: "absolute",
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                }}
-              />
+    <>
+      <Header
+        open={open}
+        setOpen={setOpen}
+        onSearch={(q) => setSearchQuery(q)}
+      />
+      <Sidebar open={open} setOpen={setOpen} onLogout={handleLogout} />
+
+      <div className="home-container">
+        {/* Tabs */}
+        <div className="tabs-container">
+          {tabs.map((tab) => (
+            <div
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`tab-item ${activeTab === tab ? "active" : ""}`}
+            >
+              {tab}
+            </div>
+          ))}
+        </div>
+
+        {/* Content */}
+        <div className="content-section">
+          {loading && page === 1 && (
+            <p style={{ textAlign: "center" }}>Loading posts...</p>
+          )}
+
+          {error && (
+            <div className="message-box error">
+              <strong>Error:</strong> {error}
+            </div>
+          )}
+
+          {!loading && !error && filteredPosts.length === 0 && page === 1 && (
+            <div className="message-box no-posts">
+              No posts found for this category or search.
+            </div>
+          )}
+
+          {filteredPosts.length > 0 && (
+            <div className="post-list">
+              {filteredPosts.map((post) => (
+                <PostCard
+                  key={post._id}
+                  post={transformPostForCard(post)}
+                  onToggleLike={() => toggleLike(post._id)}
+                  onToggleBookmark={() => toggleBookmark(post._id)}
+                />
+              ))}
+            </div>
+          )}
+
+          {/* Load More */}
+          <div style={{ padding: "20px", textAlign: "center" }}>
+            {loading && page > 1 && <p>Loading more posts...</p>}
+
+            {!loading && hasMore && filteredPosts.length > 0 && (
+              <button
+                className="load-more-btn"
+                onClick={handleLoadMore}
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+              >
+                Load More
+              </button>
+            )}
+
+            {!loading && !hasMore && filteredPosts.length > 0 && (
+              <p style={{ color: "#666" }}>No more posts to load.</p>
             )}
           </div>
-        ))}
-      </div>
-
-      {/* Content */}
-      <div style={{ marginTop: "30px", width: "100%" }}>
-        {/* Loading เฉพาะตอนโหลดหน้า 1 */}
-        {loading && page === 1 && (
-          <p style={{ textAlign: "center" }}>Loading posts...</p>
-        )}
-
-        {error && (
-          <div
-            style={{
-              padding: "20px",
-              backgroundColor: "#fee",
-              border: "1px solid #fcc",
-              borderRadius: "5px",
-              color: "#c00",
-            }}
-          >
-            <strong>Error:</strong> {error}
-            <br />
-            <small>Check console for more details</small>
-          </div>
-        )}
-
-        {/* แสดง "No posts" เมื่อโหลดเสร็จ, ไม่มี error, ไม่มี post, และเป็นหน้า 1 */}
-        {!loading && !error && posts.length === 0 && page === 1 && (
-          <p style={{ textAlign: "center", color: "#666" }}>
-            No posts found for this category.
-          </p>
-        )}
-
-        {/* แสดงรายการ Posts (มีเสมอแม้กำลังโหลดหน้า 2+) */}
-        {posts.length > 0 && (
-          <div style={{ display: "flex", flexDirection: "column", gap: "0" }}>
-            {posts.map((post) => (
-              <PostCard
-                key={post._id}
-                post={transformPostForCard(post)}
-                onToggleLike={() => toggleLike(post._id)}
-                onToggleBookmark={() => toggleBookmark(post._id)}
-              />
-            ))}
-          </div>
-        )}
-
-        {/* 7. เพิ่มปุ่ม Load More และข้อความสถานะ */}
-        <div style={{ padding: "20px", textAlign: "center" }}>
-          {/* แสดง "Loading..." เมื่อกำลังโหลดหน้า 2+ */}
-          {loading && page > 1 && <p>Loading more posts...</p>}
-
-          {/* แสดงปุ่ม "Load More" ... */}
-          {!loading && hasMore && posts.length > 0 && (
-            <button
-              onClick={handleLoadMore}
-              onMouseEnter={() => setIsHovered(true)} // ⭐️ เพิ่ม
-              onMouseLeave={() => setIsHovered(false)} // ⭐️ เพิ่ม
-              style={{
-                // ⭐️ อัปเดต style ทั้งหมด
-                padding: "10px 25px",
-                fontSize: "15px",
-                fontWeight: "bold",
-                color: isHovered ? "white" : "black", // สลับสีตัวอักษร
-                backgroundColor: isHovered ? "black" : "white", // สลับสีพื้นหลัง
-                border: "1px solid black", // ขอบสีดำ
-                borderRadius: "5px",
-                cursor: "pointer",
-                transition: "background-color 0.2s, color 0.2s", // เพิ่มอนิเมชัน
-              }}
-            >
-              Load More
-            </button>
-          )}
-
-          {/* แสดง "No more posts" เมื่อ: ไม่ได้โหลด, ไม่มีข้อมูลอีกแล้ว, และมี post แสดงอยู่บ้างแล้ว */}
-          {!loading && !hasMore && posts.length > 0 && (
-            <p style={{ color: "#666" }}>No more posts to load.</p>
-          )}
         </div>
       </div>
-    </div>
+    </>
   );
 }
