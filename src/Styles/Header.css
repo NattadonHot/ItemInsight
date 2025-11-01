@@ -55,27 +55,45 @@
   font-size:30px;
 }
 
+/* Header.css */
 .search-box {
+  position: relative;
   display: flex;
   align-items: center;
-  background-color: var(--white); /* ขาว */
-  border-radius: 9999px; /* ทำให้โค้งมน */
-  padding: 5px 10px;
-  width: 250px;
+  background: #f0f2f5;
+  border-radius: 25px;
+  padding: 0.5rem 1rem;
+  transition: all 0.25s ease;
+  border: 1px solid transparent;
+}
+
+.search-box:hover {
+  background: #e4e6eb;
+}
+
+.search-box:focus-within {
+  background: #ffffff;
+  border: 1px solid #ccc;
+  box-shadow: 0 0 0 3px rgba(24, 119, 242, 0.2);
 }
 
 .search-icon {
-  color: #9ca3af; /* เทาอ่อน */
-  margin-right: 8px;
+  color: #65676b;
+  font-size: 1.1rem;
+  margin-right: 0.5rem;
 }
 
 .search-box input {
   border: none;
   outline: none;
-  flex: 1;
-  font-size: 14px;
-  color: #374151;
   background: transparent;
+  font-size: 0.95rem;
+  width: 180px;
+  transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.search-box input:focus {
+  width: 320px;
 }
 
 .user-icon {
