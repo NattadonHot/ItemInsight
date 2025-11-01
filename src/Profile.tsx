@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import type { ChangeEvent } from "react";
+import type { ChangeEvent } from "react"; // ✅ ใช้ type-only import
 import { useNavigate } from "react-router-dom";
 
 const MAX_FILE_SIZE_MB = 2;
@@ -10,20 +10,19 @@ const Profile: React.FC = () => {
   const [userId, setUserId] = useState<string | null>(null);
   const [username, setUsername] = useState<string>("");
   const [preview, setPreview] = useState<string>(
-    "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+    localStorage.getItem("avatarUrl") ||
+      "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
   );
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const [uploadSuccess, setUploadSuccess] = useState<boolean>(false);
-  const [bio, setBio] = useState<string>("");
-
+  
   const navigate = useNavigate();
 
   useEffect(() => {
-    document.title = "My Profile in ItemInsight";
+    document.title = "My Profile - ItemInsight";
 
-    // ดึง userId จาก localStorage
     const storedUserId = localStorage.getItem("userId");
     const storedUsername = localStorage.getItem("username");
 
@@ -33,22 +32,22 @@ const Profile: React.FC = () => {
     }
 
     setUserId(storedUserId);
-    if (storedUsername) {
-      setUsername(storedUsername);
-    }
+    if (storedUsername) setUsername(storedUsername);
 
-    // Fetch profile
     const fetchProfile = async () => {
       try {
         const res = await axios.get(`${API_URL}/api/user/${storedUserId}`);
         const userData = res.data;
 
-        if (userData.avatarUrl) setPreview(userData.avatarUrl);
+        if (userData.avatarUrl) {
+          setPreview(userData.avatarUrl);
+          localStorage.setItem("avatarUrl", userData.avatarUrl);
+        }
+
         if (userData.username && !storedUsername) {
           setUsername(userData.username);
           localStorage.setItem("username", userData.username);
         }
-        if (userData.bio) setBio(userData.bio);
       } catch (err) {
         console.error(err);
         setError("❌ Cannot fetch profile");
@@ -56,6 +55,17 @@ const Profile: React.FC = () => {
     };
 
     fetchProfile();
+
+    // ฟัง event อัปเดต avatar
+    const handleAvatarUpdate = () => {
+      const newAvatar = localStorage.getItem("avatarUrl");
+      if (newAvatar) setPreview(newAvatar);
+    };
+    window.addEventListener("avatarUpdated", handleAvatarUpdate);
+
+    return () => {
+      window.removeEventListener("avatarUpdated", handleAvatarUpdate);
+    };
   }, []);
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -89,9 +99,7 @@ const Profile: React.FC = () => {
       return;
     }
 
-    if (uploading) {
-      return;
-    }
+    if (uploading) return;
 
     setUploading(true);
     setError("");
@@ -107,7 +115,6 @@ const Profile: React.FC = () => {
 
       const newAvatarUrl = res.data.avatarUrl;
       setPreview(newAvatarUrl);
-
       localStorage.setItem("avatarUrl", newAvatarUrl);
       window.dispatchEvent(new Event("avatarUpdated"));
 
@@ -124,24 +131,6 @@ const Profile: React.FC = () => {
       }
     } finally {
       setUploading(false);
-    }
-  };
-
-  const handleSaveProfile = async () => {
-    if (!userId) {
-      setError("❌ User not logged in");
-      return;
-    }
-
-    try {
-      await axios.put(`${API_URL}/api/user/${userId}`, {
-        bio: bio,
-      });
-
-      alert("✅ Profile updated successfully!");
-    } catch (err: any) {
-      console.error(err);
-      setError("❌ Failed to update profile");
     }
   };
 
@@ -315,59 +304,7 @@ const Profile: React.FC = () => {
             </button>
           </div>
         </div>
-
-        <div className="bio-input" style={{ marginTop: "30px" }}>
-          <label
-            htmlFor="bio"
-            style={{
-              fontSize: 22,
-              fontFamily: "Poppins",
-              fontWeight: "600",
-              wordWrap: "break-word",
-            }}
-          >
-            Short bio
-          </label>
-          <br />
-          <textarea
-            id="bio"
-            value={bio}
-            onChange={(e) => setBio(e.target.value)}
-            style={{
-              width: 400,
-              height: 112,
-              border: "2px solid #3B82F6",
-              backgroundColor: "#F9FAFB",
-              paddingLeft: "10px",
-              paddingTop: "10px",
-              resize: "vertical",
-            }}
-            placeholder="Tell us about yourself..."
-          />
-        </div>
       </form>
-
-      <button
-        type="button"
-        className="btn-done"
-        onClick={handleSaveProfile}
-        style={{
-          width: 95,
-          height: 40,
-          marginTop: "40px",
-          borderRadius: "15px",
-          border: "2px solid #F9FAFB",
-          backgroundColor: "#3B82F6",
-          fontSize: 16,
-          fontFamily: "Poppins",
-          fontWeight: "600",
-          wordWrap: "break-word",
-          color: "#F9FAFB",
-          cursor: "pointer",
-        }}
-      >
-        Done
-      </button>
     </div>
   );
 };

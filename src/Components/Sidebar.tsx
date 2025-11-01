@@ -49,11 +49,7 @@ export default function Sidebar({ open, setOpen, onLogout }: SidebarProps) {
         <Link to="/bookmarks" className="sidebar-link" onClick={() => setOpen(false)}>
           <FaBookmark /> Bookmark
         </Link>
-
-        <Link to="/settings" className="sidebar-link" onClick={() => setOpen(false)}>
-          <FaCog /> Setting
-        </Link>
-
+        
         <div
           className="sidebar-link sidebar-logout"
           onClick={() => {

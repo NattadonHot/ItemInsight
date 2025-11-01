@@ -11,6 +11,7 @@ import Write from "./Write";
 import PostDetail from "./PostDetail";
 import MyPosts from "./Myposts";
 import Bookmark from "./Bookmark";
+import ChangePassword from "./ChangePassword";
 
 export default function App() {
   const [open, setOpen] = useState(false);
@@ -56,6 +57,11 @@ export default function App() {
           <Route path="/home" element={
             <ProtectedRoute isLoggedIn={isLoggedIn}>
               <Home />
+            </ProtectedRoute>
+          } />
+          <Route path="/change-password" element={
+            <ProtectedRoute isLoggedIn={isLoggedIn}>
+              <ChangePassword />
             </ProtectedRoute>
           } />
           <Route path="/profile" element={
