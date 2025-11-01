@@ -3,7 +3,7 @@ import PostCard from "./Components/PostCard";
 
 interface Post {
   _id: string;
-  slug?: string; // ถ้า backend มี slug
+  slug?: string;
   title: string;
   subtitle?: string;
   userId?: {
@@ -15,6 +15,8 @@ interface Post {
     publicId: string;
   }>;
   likesCount: number;
+  likedUsers?: string[];
+  bookmarkedUsers?: string[];
   category: string;
   createdAt: string;
 }
@@ -25,7 +27,6 @@ export default function MyPosts() {
   const [error, setError] = useState<string | null>(null);
 
   const API_URL = import.meta.env.VITE_URL_API || "http://localhost:3000";
-
   const userId = localStorage.getItem("userId");
   const token = localStorage.getItem("token");
 
@@ -45,10 +46,7 @@ export default function MyPosts() {
       setLoading(true);
       setError(null);
 
-      // URL backend จริง
       const apiUrl = `${API_URL}/api/posts/user/${userId}`;
-      console.log("Fetching my posts from:", apiUrl);
-
       const response = await fetch(apiUrl, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -56,7 +54,6 @@ export default function MyPosts() {
         },
       });
 
-      // ถ้าไม่ ok, log text เพื่อ debug
       if (!response.ok) {
         const text = await response.text();
         console.error("API error response:", text);
@@ -64,7 +61,6 @@ export default function MyPosts() {
       }
 
       const result = await response.json();
-      console.log("My Posts Result:", result);
 
       if (result.success) {
         setPosts(result.data);
@@ -79,6 +75,59 @@ export default function MyPosts() {
     }
   };
 
+  const toggleLike = async (postId: string) => {
+    if (!userId) return alert("Please login first");
+    try {
+      const res = await fetch(`${API_URL}/api/posts/${postId}/toggle-like`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setPosts((prev) =>
+          prev.map((p) =>
+            p._id === postId
+              ? {
+                  ...p,
+                  likesCount: data.likesCount,
+                  likedUsers: data.liked ? [userId] : [],
+                }
+              : p
+          )
+        );
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const toggleBookmark = async (postId: string) => {
+    if (!userId) return alert("Please login first");
+    try {
+      const res = await fetch(
+        `${API_URL}/api/posts/${postId}/toggle-bookmark`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId }),
+        }
+      );
+      const data = await res.json();
+      if (data.success) {
+        setPosts((prev) =>
+          prev.map((p) =>
+            p._id === postId
+              ? { ...p, bookmarkedUsers: data.bookmarked ? [userId] : [] }
+              : p
+          )
+        );
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const transformPostForCard = (post: Post) => ({
     id: post._id,
     slug: post.slug || post._id,
@@ -88,10 +137,10 @@ export default function MyPosts() {
     userProfile: post.userId?.avatarUrl || "https://placehold.co/30x30",
     image: post.images?.[0]?.url || "https://placehold.co/120x120",
     likes: post.likesCount || 0,
-    isLiked: false,
+    isLiked: post.likedUsers?.includes(userId || "") || false,
+    isBookmarked: post.bookmarkedUsers?.includes(userId || "") || false,
     isFavorited: false,
-    isBookmarked: false,
-    createdAt: post.createdAt, // ✅ เพิ่มตรงนี้
+    createdAt: post.createdAt,
   });
 
   return (
@@ -119,9 +168,7 @@ export default function MyPosts() {
       </h2>
 
       <div style={{ width: "100%" }}>
-        {loading && (
-          <p style={{ textAlign: "center" }}>Loading your posts...</p>
-        )}
+        {loading && <p style={{ textAlign: "center" }}>Loading your posts...</p>}
 
         {error && (
           <div
@@ -147,11 +194,14 @@ export default function MyPosts() {
         )}
 
         {!loading && !error && posts.length > 0 && (
-          <div
-            style={{ display: "flex", flexDirection: "column", gap: "16px" }}
-          >
+          <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
             {posts.map((post) => (
-              <PostCard key={post._id} post={transformPostForCard(post)} />
+              <PostCard
+                key={post._id}
+                post={transformPostForCard(post)}
+                onToggleLike={() => toggleLike(post._id)}
+                onToggleBookmark={() => toggleBookmark(post._id)}
+              />
             ))}
           </div>
         )}
