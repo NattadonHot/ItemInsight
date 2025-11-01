@@ -81,7 +81,7 @@ export default function MyPosts() {
 
   const transformPostForCard = (post: Post) => ({
     id: post._id,
-    slug: post.slug || post._id, // ใช้ slug ถ้ามี, fallback เป็น _id
+    slug: post.slug || post._id,
     title: post.title,
     description: post.subtitle || "",
     username: post.userId?.username || "You",
@@ -91,6 +91,7 @@ export default function MyPosts() {
     isLiked: false,
     isFavorited: false,
     isBookmarked: false,
+    createdAt: post.createdAt, // ✅ เพิ่มตรงนี้
   });
 
   return (
@@ -118,7 +119,9 @@ export default function MyPosts() {
       </h2>
 
       <div style={{ width: "100%" }}>
-        {loading && <p style={{ textAlign: "center" }}>Loading your posts...</p>}
+        {loading && (
+          <p style={{ textAlign: "center" }}>Loading your posts...</p>
+        )}
 
         {error && (
           <div
@@ -144,7 +147,9 @@ export default function MyPosts() {
         )}
 
         {!loading && !error && posts.length > 0 && (
-          <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+          <div
+            style={{ display: "flex", flexDirection: "column", gap: "16px" }}
+          >
             {posts.map((post) => (
               <PostCard key={post._id} post={transformPostForCard(post)} />
             ))}
