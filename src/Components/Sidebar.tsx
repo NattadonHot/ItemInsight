@@ -1,7 +1,6 @@
 import {
   FaUser,
   FaHome,
-  FaCog,
   FaBookmark,
   FaPen,
   FaRegListAlt,   // ✅ เพิ่มไอคอนสำหรับ My Posts
