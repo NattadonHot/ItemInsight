@@ -19,7 +19,9 @@ interface Post {
     likes?: number;
     isLiked?: boolean;
     isBookmarked?: boolean;
+    createdAt: string; // ✅ เพิ่มวันที่โพสต์
 }
+
 
 interface PostCardProps {
     post: Post;
@@ -98,6 +100,17 @@ export default function PostCard({ post, onToggleLike, onToggleBookmark }: PostC
                 <Link to={`/posts/${post.slug}`} className="post-title">
                     {post.title}
                 </Link>
+                <p style={{ color: "#999", fontSize: "12px", margin: "5px 0" }}>
+                    {post.createdAt
+                        ? new Date(post.createdAt).toLocaleString("en-GB", {  // ใช้ภาษาอังกฤษ
+                            day: "2-digit",
+                            month: "long",   // October, November
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: false,  // 24-hour format
+                        })
+                        : "Not specified"}
+                </p>
                 <p style={{ color: "#555", fontSize: "14px", margin: "15px 0 10px" }}>
                     {post.description}
                 </p>
