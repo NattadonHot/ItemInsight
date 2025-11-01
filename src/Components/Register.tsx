@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState , useEffect} from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../Styles/Register.css";
@@ -41,6 +41,10 @@ export default function Register({ onRegister }: RegisterProps) {
       }
     }
   };
+
+  useEffect(() => {
+      document.title = "ItemInsight";
+    }, []);
 
   return (
     <div className="register-container">
