@@ -1,4 +1,4 @@
-import { useState , useEffect} from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../Styles/Register.css";
@@ -22,17 +22,20 @@ export default function Register({ onRegister }: RegisterProps) {
     }
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/register`, {
-        username,
-        email,
-        password,
-      });
+      const response = await axios.post(
+        `${import.meta.env.VITE_URL_API}/api/register`,
+        {
+          username,
+          email,
+          password,
+        }
+      );
 
       setMessage("✅ Registered successfully!");
       console.log("Response:", response.data);
 
       // ✅ หลัง register สำเร็จ ให้เรียก callback onRegister
-      setTimeout(() => onRegister(), 1500);
+      setTimeout(() => navigate("/login"), 1500);
     } catch (err: any) {
       if (err.response) {
         setMessage(`❌ ${err.response.data.message}`);
@@ -43,8 +46,8 @@ export default function Register({ onRegister }: RegisterProps) {
   };
 
   useEffect(() => {
-      document.title = "ItemInsight";
-    }, []);
+    document.title = "ItemInsight";
+  }, []);
 
   return (
     <div className="register-container">
