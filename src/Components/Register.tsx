@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import "../Styles/Register.css";
 
 interface RegisterProps {
-  onRegister: () => void; // callback เมื่อ register สำเร็จ
+  onRegister: () => void;
 }
 
 export default function Register({ onRegister }: RegisterProps) {
@@ -22,21 +22,36 @@ export default function Register({ onRegister }: RegisterProps) {
     }
 
     try {
-      const response = await axios.post(
+      // 1️⃣ Register user
+      const registerResponse = await axios.post(
         `${import.meta.env.VITE_URL_API}/api/register`,
-        {
-          username,
-          email,
-          password,
-        }
+        { username, email, password }
       );
 
+      console.log("✅ Register success:", registerResponse.data);
       setMessage("✅ Registered successfully!");
-      console.log("Response:", response.data);
 
-      // ✅ หลัง register สำเร็จ ให้เรียก callback onRegister
-      setTimeout(() => navigate("/login"), 1500);
+      // 2️⃣ Auto-login after register
+      const loginResponse = await axios.post(
+        `${import.meta.env.VITE_URL_API}/api/login`,
+        { email, password }
+      );
+
+      const { token, user } = loginResponse.data;
+      console.log("🔐 Login success:", user);
+
+      // 3️⃣ Save to localStorage
+      localStorage.setItem("token", token);
+      localStorage.setItem("userId", user.id);
+      localStorage.setItem("userEmail", user.email);
+      localStorage.setItem("avatarUrl", user.avatarUrl);
+      localStorage.setItem("username", user.username);
+
+      // 4️⃣ Callback + redirect to home
+      onRegister();
+      navigate("/home");
     } catch (err: any) {
+      console.error(err);
       if (err.response) {
         setMessage(`❌ ${err.response.data.message}`);
       } else {
